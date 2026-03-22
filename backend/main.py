@@ -296,6 +296,77 @@ async def analyze_resume(file: UploadFile = File(...)):
 
 
 # ------------------------------
+# Live Job Vacancies (JobSpy)
+# ------------------------------
+@app.get("/api/jobs/match")
+async def get_matching_jobs(role: str = "Software Engineer", location: str = ""):
+    """Scrape real-time job listings from Indeed and LinkedIn for the given role."""
+    try:
+        from jobspy import scrape_jobs
+        import concurrent.futures
+
+        loc = location.strip() if location.strip() else "Remote"
+        country = "India"  # Default market
+
+        def scrape_site(site_name):
+            try:
+                jobs_df = scrape_jobs(
+                    site_name=[site_name],
+                    search_term=role,
+                    location=loc,
+                    results_wanted=5,
+                    country_indeed=country,
+                )
+                return jobs_df
+            except Exception as ex:
+                print(f"[JobSpy][{site_name}] Error: {ex}")
+                return None
+
+        all_jobs = []
+        # Scrape both sites concurrently within a 20s window
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            futures = {
+                executor.submit(scrape_site, "indeed"): "indeed",
+                executor.submit(scrape_site, "linkedin"): "linkedin",
+            }
+            for future in concurrent.futures.as_completed(futures, timeout=25):
+                df = future.result()
+                if df is not None and not df.empty:
+                    for _, row in df.iterrows():
+                        job_url = str(row.get("job_url", "")) or str(row.get("job_url_direct", ""))
+                        if not job_url:
+                            continue
+                        all_jobs.append({
+                            "title": str(row.get("title", "Unknown Role")),
+                            "company": str(row.get("company", "Unknown Company")),
+                            "location": str(row.get("location", loc)),
+                            "job_url": job_url,
+                            "source": futures[future],
+                            "date_posted": str(row.get("date_posted", "Recent")),
+                        })
+                        if len(all_jobs) >= 8:
+                            break
+
+        return all_jobs[:8]
+
+    except Exception as e:
+        print(f"[Jobs API] Error: {e}")
+        # Graceful AI-generated fallback
+        from ml.vargo_assistant import groq_response
+        prompt = f"Generate 3 realistic job listings for '{role}' in '{location or 'Remote'}' India as a JSON array. Each object must have: title, company, location, job_url (use https://www.naukri.com for url), date_posted. Return ONLY raw JSON array."
+        try:
+            raw = groq_response(prompt)
+            start = raw.find("[")
+            end = raw.rfind("]") + 1
+            if start != -1 and end > 0:
+                fallback = json.loads(raw[start:end])
+                return fallback[:3]
+        except:
+            pass
+        return []
+
+
+# ------------------------------
 # Career Analysis
 # ------------------------------
 @app.post("/career_analysis")
@@ -929,88 +1000,139 @@ def mentor_evaluate_test(submission: MentorTestSubmission):
 
 
 # ------------------------------
-# Mentor & Student Chat System (In-Memory DB)
+# Mentor & Student Chat System (MongoDB + WebSocket Real-Time)
 # ------------------------------
-# Format: { "chat_id": { "id": str, "studentId": str, "studentUsername": str, "mentorId": str, "messages": list } }
-chats_db = {}
+import asyncio
+
+class MentorChatManager:
+    """Manages real-time WebSocket connections per chat room."""
+    def __init__(self):
+        self.rooms: Dict[str, List[WebSocket]] = {}
+
+    async def connect(self, ws: WebSocket, room_id: str):
+        await ws.accept()
+        self.rooms.setdefault(room_id, []).append(ws)
+
+    def disconnect(self, ws: WebSocket, room_id: str):
+        if room_id in self.rooms and ws in self.rooms[room_id]:
+            self.rooms[room_id].remove(ws)
+
+    async def broadcast(self, room_id: str, message: dict):
+        if room_id in self.rooms:
+            dead = []
+            for ws in self.rooms[room_id]:
+                try:
+                    await ws.send_json(message)
+                except Exception:
+                    dead.append(ws)
+            for ws in dead:
+                self.rooms[room_id].remove(ws)
+
+mentor_chat_manager = MentorChatManager()
+
+@app.websocket("/ws/mentor-chat/{room_id}")
+async def mentor_chat_ws(websocket: WebSocket, room_id: str):
+    """Real-time WebSocket channel for a mentor-student chat room."""
+    await mentor_chat_manager.connect(websocket, room_id)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            msg_obj = {
+                "senderId": data.get("senderId", "unknown"),
+                "senderName": data.get("senderName", "User"),
+                "text": data.get("text", ""),
+                "timestamp": str(datetime.now())
+            }
+            # Persist to MongoDB
+            db = get_db()
+            if db is not None:
+                try:
+                    await db.mentor_chats.update_one(
+                        {"room_id": room_id},
+                        {
+                            "$push": {"messages": msg_obj},
+                            "$set": {"updated_at": str(datetime.now())},
+                            "$setOnInsert": {"created_at": str(datetime.now())}
+                        },
+                        upsert=True
+                    )
+                except Exception as e:
+                    print(f"[MentorChat] DB save error: {e}")
+            # Broadcast to all in room
+            await mentor_chat_manager.broadcast(room_id, msg_obj)
+    except WebSocketDisconnect:
+        mentor_chat_manager.disconnect(websocket, room_id)
+
+@app.get("/api/mentor-chat/{room_id}/messages")
+async def get_mentor_chat_messages(room_id: str):
+    """Load historical messages for a chat room from MongoDB."""
+    db = get_db()
+    if db is None:
+        return {"messages": []}
+    try:
+        doc = await db.mentor_chats.find_one({"room_id": room_id}, {"_id": 0, "messages": 1})
+        return {"messages": doc.get("messages", []) if doc else []}
+    except Exception as e:
+        print(f"[MentorChat] Load error: {e}")
+        return {"messages": []}
+
+@app.post("/api/mentor-chat/create-consultation-order")
+async def create_consultation_order():
+    """Creates a Razorpay order for Go-tier students to pay the consultation fee (₹49)."""
+    try:
+        amount = 4900  # Rs. 49 in paise
+        order = razorpay_client.order.create({
+            "amount": amount,
+            "currency": "INR",
+            "receipt": f"consultation_{USER_ID}"
+        })
+        return {"order_id": order["id"], "amount": amount, "currency": "INR", "key_id": RAZORPAY_KEY_ID}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/api/mentors")
-def get_available_mentors():
-    # Return a demo list of available mentors for students to chat with
-    return {
-        "mentors": [
-            {
-                "id": "mentor_alex",
-                "name": "Alex Chen",
-                "expertise": "Machine Learning & AI",
-                "experience": 8
-            },
-            {
-                "id": "mentor_sarah",
-                "name": "Sarah Johnson",
-                "expertise": "Frontend Architecture",
-                "experience": 12
-            },
-            {
-                "id": "mentor_david",
-                "name": "David Kumar",
-                "expertise": "Product Management",
-                "experience": 5
-            }
+async def get_available_mentors():
+    """Returns verified mentors from MongoDB."""
+    db = get_db()
+    mentors = []
+    if db is not None:
+        try:
+            cursor = db.users.find({"is_verified_mentor": True}, {"_id": 0, "user_id": 1, "name": 1, "mentor_expertise": 1, "mentor_experience": 1, "is_online": 1})
+            async for doc in cursor:
+                mentors.append({
+                    "id": doc.get("user_id", ""),
+                    "name": doc.get("name", "Mentor"),
+                    "expertise": doc.get("mentor_expertise", "General"),
+                    "experience": doc.get("mentor_experience", 1),
+                    "online": doc.get("is_online", False)
+                })
+        except Exception as e:
+            print(f"[Mentors] DB Error: {e}")
+
+    # Always include demo mentors if DB is empty
+    if not mentors:
+        mentors = [
+            {"id": "mentor_alex", "name": "Alex Chen", "expertise": "Machine Learning & AI", "experience": 8, "online": True},
+            {"id": "mentor_sarah", "name": "Sarah Johnson", "expertise": "Frontend Architecture", "experience": 12, "online": False},
+            {"id": "mentor_david", "name": "David Kumar", "expertise": "Product Management", "experience": 5, "online": True},
         ]
-    }
+    return {"mentors": mentors}
 
-@app.get("/api/mentorhub/chats/{mentor_id}")
-def get_mentor_chats(mentor_id: str):
-    # Returns all chats where this mentor is a participant
-    mentor_chats = []
-    for chat_id, chat_data in chats_db.items():
-        if chat_data["mentorId"] == mentor_id:
-            last_message = ""
-            if chat_data["messages"]:
-                last_message = chat_data["messages"][-1]["text"]
-                
-            mentor_chats.append({
-                "id": chat_id,
-                "studentId": chat_data["studentId"],
-                "studentUsername": chat_data["studentUsername"],
-                "lastMessage": last_message
-            })
-    return {"chats": mentor_chats}
-
-@app.get("/api/mentorhub/chat/{chat_id}/messages")
-def get_chat_messages(chat_id: str):
-    if chat_id not in chats_db:
-        return {"messages": []}
-    return {"messages": chats_db[chat_id]["messages"]}
-
-class SendMessageRequest(BaseModel):
-    chatId: str
-    text: str
-    senderId: str
-    mentorId: str
-    studentId: str
-    studentUsername: str
-
-@app.post("/api/mentorhub/chat/messages")
-def send_chat_message(request: SendMessageRequest):
-    if request.chatId not in chats_db:
-        # Create new chat channel
-        chats_db[request.chatId] = {
-            "id": request.chatId,
-            "studentId": request.studentId,
-            "studentUsername": request.studentUsername,
-            "mentorId": request.mentorId,
-            "messages": []
-        }
-    
-    # Append message
-    chats_db[request.chatId]["messages"].append({
-        "senderId": request.senderId,
-        "text": request.text,
-        "timestamp": str(datetime.now())
-    })
-    return {"success": True}
+@app.post("/api/mentor/set-online")
+async def set_mentor_online(status: dict):
+    """Updates mentor's online status in MongoDB. Called when mentor logs in/out."""
+    db = get_db()
+    if db is None:
+        return {"success": False}
+    try:
+        await db.users.update_one(
+            {"user_id": status.get("mentor_id", USER_ID)},
+            {"$set": {"is_online": status.get("online", True), "last_seen": str(datetime.now())}},
+            upsert=True
+        )
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 # ------------------------------
 # V14 Intelligent Job Matchmaker

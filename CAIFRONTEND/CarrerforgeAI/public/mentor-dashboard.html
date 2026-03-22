@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -103,6 +103,12 @@
         .btn-prev { background: rgba(255,255,255,0.08); color: #cbd5e1; }
         .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; }
 
+        /* Timer Badge */
+        .timer-badge { 
+            background: rgba(239,68,68,0.2); color: #f87171; 
+            font-family: monospace; font-size: 1.05rem; font-weight: 700;
+        }
+
         /* Warning overlay */
         .cheat-warning {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -206,6 +212,7 @@
                 <p style="color: #818cf8; font-weight: 600; margin-bottom: 6px;">📋 Qualification Requirements</p>
                 <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">
                     • 20 AI-generated expert-level questions<br>
+                    • <strong style="color: #f87171;">Strict Time Limit: 30 Minutes</strong><br>
                     • Camera access required for AI proctoring<br>
                     • Minimum <strong style="color: #10b981;">95% score</strong> required to qualify<br>
                     • <strong style="color: #f87171;">Anti-cheat AI active</strong> — copying, tab switching, or suspicious activity will terminate the test<br>
@@ -221,6 +228,7 @@
             <div class="test-header">
                 <div class="test-info">
                     <span class="test-badge badge-live" id="liveBadge">🔴 LIVE PROCTORED</span>
+                    <span class="test-badge timer-badge" id="examTimer">⏱ 30:00</span>
                     <span class="test-badge badge-progress" id="qProgress">Q 1 / 20</span>
                     <span class="test-badge" id="tabWarnings" style="background: rgba(255,255,255,0.05); color: #94a3b8;">Tab switches: 0</span>
                 </div>
@@ -240,18 +248,22 @@
         </div>
 
         <!-- STAGE 3: Results -->
-        <div id="stage3" style="display: none; width: 100%; display: none; flex-direction: column; align-items: center;">
+        <div id="stage3" style="display: none; width: 100%; flex-direction: column; align-items: center;">
             <div class="result-card" id="resultCard"></div>
         </div>
     </main>
 
-    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/main.js"></script>
     <script>
         let questions = [];
         let answers = {};
         let currentQ = 0;
         let cameraStream = null;
         let testActive = false;
+        
+        let examTimerInterval = null;
+        let timeRemainingSeconds = 30 * 60; // 30 minutes
 
         // ==============================
         // ANTI-CHEAT ENGINE
@@ -486,6 +498,7 @@
                 stage1.style.display = 'none';
                 stage2.style.display = 'block';
                 renderQuestion();
+                startTimer();
             } catch (e) {
                 alert('Error connecting to server.');
                 startTestBtn.textContent = 'Start Qualification Test';
@@ -495,6 +508,27 @@
 
         function dismissWarning() {
             cheatWarning.style.display = 'none';
+        }
+        
+        // ---- Timer Logic ----
+        function startTimer() {
+            timeRemainingSeconds = 30 * 60;
+            document.getElementById('examTimer').textContent = `⏱ 30:00`;
+            examTimerInterval = setInterval(() => {
+                if(!testActive) {
+                    clearInterval(examTimerInterval);
+                    return;
+                }
+                timeRemainingSeconds--;
+                let m = Math.floor(timeRemainingSeconds / 60);
+                let s = timeRemainingSeconds % 60;
+                document.getElementById('examTimer').textContent = `⏱ ${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                
+                if (timeRemainingSeconds <= 0) {
+                    clearInterval(examTimerInterval);
+                    submitExamData("Time Expired");
+                }
+            }, 1000);
         }
 
         // ---- Render Question ----
@@ -538,11 +572,15 @@
         nextBtn.addEventListener('click', () => { if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); } });
 
         // ---- Submit Test ----
-        submitBtn.addEventListener('click', async () => {
-            const answered = Object.keys(answers).length;
-            if (answered < questions.length) {
-                const proceed = confirm(`You've answered ${answered}/${questions.length} questions. Unanswered = wrong. Continue?`);
-                if (!proceed) return;
+        async function submitExamData(autoReason = null) {
+            if (autoReason) {
+                alert(`Test Auto-Submitted: ${autoReason}`);
+            } else {
+                const answered = Object.keys(answers).length;
+                if (answered < questions.length) {
+                    const proceed = confirm(`You've answered ${answered}/${questions.length} questions. Unanswered = wrong. Continue?`);
+                    if (!proceed) return;
+                }
             }
 
             submitBtn.textContent = 'Evaluating...';
@@ -565,7 +603,9 @@
                 submitBtn.textContent = 'Submit Test ✓';
                 submitBtn.disabled = false;
             }
-        });
+        }
+
+        submitBtn.addEventListener('click', () => submitExamData());
 
         // ---- Show Results ----
         function showResults(result) {
