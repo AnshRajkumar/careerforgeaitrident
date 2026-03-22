@@ -41,16 +41,7 @@ import httpx
 
 app = FastAPI()
 
-@app.on_event("startup")
-async def startup_event():
-    try:
-        import jobspy
-        import pandas
-    except ImportError:
-        import subprocess
-        import sys
-        print(f"[CareerForgeAI] Auto-installing missing JobSpy natively into: {sys.executable}")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "python-jobspy", "pandas"])
+
 
 import os as _cors_os
 # In development, fallback to explicit localhost origins to allow credentials
