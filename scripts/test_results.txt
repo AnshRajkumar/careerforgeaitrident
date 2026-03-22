@@ -1,0 +1,7 @@
+1. Frontend: (200, '<!DOCTYPE html> <html lang="en"> <head>     <meta charset="UTF-8">     <meta name="viewport" content')
+2. Backend Root: (200, '{"message":"CareerForge AI running"}')
+3. VarGo Chat: (200, '{"assistant":"VarGo","response":"Hello. It\'s nice to meet you. I\'m VarGo, your AI assistant. I\'m her')
+4. Expert Chat: (200, '{"assistant":"Career Expert","response":"Becoming a Product Manager (PM) can be a highly rewarding c')
+5. Mentor Test: (200, '{"questions":[{"id":1,"question":"When using React Context API with a nested component tree, what is')
+6. Release Notes: (404, '{"detail":"Not Found"}')
+7. College Test: (200, '{"error":"Failed to generate test. Please try again."}')

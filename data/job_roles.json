@@ -1,0 +1,17 @@
+{
+  "frontend_developer": ["JavaScript", "HTML5", "CSS3", "React", "Vue", "TypeScript", "Redux", "Web Performance", "Responsive Design", "Git"],
+  "backend_developer": ["Python", "Java", "Node.js", "Django", "SQL", "PostgreSQL", "MongoDB", "Docker", "REST API", "Microservices", "Git"],
+  "full_stack_developer": ["JavaScript", "React", "Node.js", "Python", "SQL", "MongoDB", "Docker", "Git", "REST API", "TypeScript"],
+  "data_scientist": ["Python", "Machine Learning", "Statistics", "SQL", "Data Visualization", "Pandas", "Tableau", "R", "Deep Learning"],
+  "machine_learning_engineer": ["Python", "Machine Learning", "Deep Learning", "SQL", "TensorFlow", "Docker", "PyTorch", "NLP", "Computer Vision"],
+  "devops_engineer": ["Linux", "AWS", "Docker", "Kubernetes", "CI/CD", "Jenkins", "Terraform", "Ansible", "Git"],
+  "cloud_architect": ["AWS", "Azure", "GCP", "Docker", "Kubernetes", "Cloud Security", "Infrastructure as Code", "Networking"],
+  "cybersecurity_analyst": ["Networking", "Linux", "Ethical Hacking", "Cryptography", "Penetration Testing", "Security Operations", "Wireshark"],
+  "product_manager": ["Agile", "Scrum", "Product Strategy", "Market Research", "Data Analysis", "User Experience", "Jira"],
+  "ui_ux_designer": ["Figma", "Sketch", "User Experience", "User Interface Design", "Prototyping", "Wireframing", "Adobe XD"],
+  "mobile_app_developer": ["Swift", "Kotlin", "React Native", "Flutter", "iOS Development", "Android Development", "Mobile UI", "Git"],
+  "blockchain_developer": ["Solidity", "Smart Contracts", "Ethereum", "Cryptography", "JavaScript", "Rust", "Web3.js"],
+  "data_engineer": ["Python", "SQL", "Hadoop", "Spark", "Kafka", "Data Modeling", "ETL", "AWS"],
+  "game_developer": ["C++", "C#", "Unity", "Unreal Engine", "Game Physics", "3D Math", "Game Design"],
+  "qa_engineer": ["Selenium", "Automated Testing", "Manual Testing", "Java", "Python", "Jira", "API Testing"]
+}

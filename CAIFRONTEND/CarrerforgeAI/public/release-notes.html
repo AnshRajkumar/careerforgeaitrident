@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Release Notes — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .release-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        .release-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+            animation: fadeIn 0.4s ease both;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+        .version-tag {
+            background: #6366f1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .release-date { color: #64748b; font-size: 0.9rem; margin-left: 10px; }
+        ul { padding-left: 20px; margin-top: 15px; color: #cad4e0; }
+        li { margin-bottom: 10px; }
+        .loading-msg { text-align: center; color: #64748b; padding: 40px; font-size: 1.1rem; }
+    </style>
+</head>
+<body class="page-loaded">
+    <div class="bg-overlay"></div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="logo-text">Menu</div></div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">??</span><span>Home</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">??</span><span>Contact Developers</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">??</span><span>Review System</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link"><span>Terms &amp; Conditions</span></a>
+                <a href="/release-notes" class="sidebar-link active">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="release-container">
+            <h1 class="title-small" style="text-align: center; margin-bottom: 40px;">
+                Release <span class="accent">Notes</span>
+            </h1>
+            <div id="notesContainer">
+                <p class="loading-msg">? Loading latest updates…</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script>
+        const BACKEND_URL = API_BASE_URL;
+
+        async function loadReleaseNotes() {
+            const container = document.getElementById('notesContainer');
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/release-notes`);
+                const notes = await res.json();
+                if (!notes || notes.length === 0) throw new Error('empty');
+                container.innerHTML = '';
+                notes.forEach((note, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'release-card';
+                    card.style.animationDelay = `${i * 0.1}s`;
+                    card.innerHTML = `
+                        <span class="version-tag">${note.version}</span>
+                        <span class="release-date">${note.date}</span>
+                        <ul>${note.changes.map(c => `<li>${c}</li>`).join('')}</ul>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="release-card">
+                        <span class="version-tag">v1.0</span>
+                        <span class="release-date">March 2026</span>
+                        <h3 style="color: #e2e8f0; margin-top: 15px; font-weight: 700;">CareerForgeAI 1.0</h3>
+                        <p style="color: #94a3b8; margin-top: 10px; line-height: 1.7;">Updates will give soon. Stay tuned for the latest features and improvements!</p>
+                    </div>
+                `;
+            }
+        }
+        loadReleaseNotes();
+    </script>
+</body>
+</html>

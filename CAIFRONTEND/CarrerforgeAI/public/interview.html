@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Interview — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .placeholder-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+        }
+        .back-btn {
+            margin-top: 30px;
+            color: #818cf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Back to Tools -->
+    <a href="/features" class="back-tools-btn" style="position:fixed;top:30px;left:80px;display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#cbd5e1;font-weight:600;font-size:0.85rem;text-decoration:none;z-index:1001;backdrop-filter:blur(10px);transition:all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='#6366f1';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#cbd5e1'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+    </a>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="container placeholder-content" style="width: 100%; max-width: 1200px; margin: 0 auto; min-height: 80vh; justify-content: flex-start; padding-top: 40px;">
+            <h1 class="title-small">Mock <span class="accent">Interview</span></h1>
+            <p class="subtitle">Practice your skills with AI-powered questions tailored exactly to your criteria.</p>
+            
+            <!-- V8 SETUP OVERLAY -->
+            <div id="interviewSetup" style="width: 100%; max-width: 600px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 20px; padding: 40px; margin-top: 30px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <h2 style="color: #c7d2fe; margin-bottom: 25px; font-weight: 800;">Configure Your Interview</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">Target Role:</label>
+                    <input type="text" id="setupRole" placeholder="e.g. Senior Frontend Developer" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; outline: none;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">Experience Level:</label>
+                    <select id="setupExp" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; outline: none;">
+                        <option value="Intern/Entry Level">Intern / Entry Level</option>
+                        <option value="Mid Level (2-4 Yrs)">Mid Level (2-4 Yrs)</option>
+                        <option value="Senior (5+ Yrs)">Senior (5+ Yrs)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">Target Company:</label>
+                    <input type="text" id="setupCompany" placeholder="e.g. Google, Amazon, OpenAI" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; outline: none;">
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">Custom Tech Stack / Requirements:</label>
+                    <input type="text" id="setupStack" placeholder="e.g. React, Next.js, System Design" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: white; outline: none;">
+                </div>
+
+                <button id="btnStartInterview" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">Enable Camera & Start Simulation</button>
+                <div style="font-size: 0.8rem; color: #ef4444; text-align: center;">?? Note: This is a Pro-Proctored Exam. Camera access is required. Anti-Cheat is active.</div>
+            </div>
+
+            <!-- PROCTORING FEED (Hidden until start) -->
+            <div id="proctoringContainer" style="display: none; width: 100%; max-width: 800px; justify-content: flex-end; margin-top: 10px;">
+                <div style="position: relative; width: 200px; height: 150px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);">
+                    <video id="cameraFeed" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; animation: pulseRed 2s infinite;">?? REC</div>
+                </div>
+            </div>
+
+            <!-- CHAT UI (Hidden until setup is done) -->
+            <div id="interviewChatContainer" style="display: none; width: 100%; max-width: 800px; height: 60vh; flex-direction: column; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; margin-top: 15px;">
+                
+                <!-- TIMER COMPONENT -->
+                <div id="timerHeader" style="display: none; background: rgba(239, 68, 68, 0.1); border-bottom: 2px solid rgba(239, 68, 68, 0.3); padding: 10px; color: #ef4444; font-family: monospace; font-size: 1.2rem; font-weight: bold; justify-content: space-between; align-items: center; padding-left: 20px; padding-right: 20px;">
+                    <span style="letter-spacing: 2px;">SECURE CONNECTION ESTABLISHED</span>
+                    <span id="countdownDisplay" style="animation: pulseRed 2s infinite;">00:00</span>
+                </div>
+
+                <div id="chatMessages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                    <div style="align-self: flex-start; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 15px; border-radius: 15px; font-size: 0.95rem;">
+                        Click "Start Interview" or type "hello" to begin.
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; padding: 20px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1);">
+                    <input type="text" id="interviewInput" placeholder="Type your answer..." style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 15px; color: white; outline: none;">
+                    <button id="interviewSendBtn" style="padding: 10px 20px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600;">Send</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <style>
+        .no-select { user-select: none; -webkit-user-select: none; -ms-user-select: none; }
+        @keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    </style>
+    <script>
+        // ANTI-CHEAT SUITE
+        let testActive = false;
+        let windowBlurCount = 0;
+        let rightClickAttempts = 0;
+
+        function handleTabSwitch() { if (document.visibilityState === 'hidden' && testActive) alert('WARNING: Tab switching is strictly prohibited during the Mock Interview.'); }
+        function handleKeyBlock(e) { if (!testActive) return; if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); alert('Developer Tools blocked.'); return false; } }
+        function handleRightClick(e) { if (!testActive) return; e.preventDefault(); rightClickAttempts++; alert('Right-click is restricted during the Mock Interview.'); return false; }
+        function handleWindowBlur() { if (!testActive) return; windowBlurCount++; console.warn('Window blur detected.'); }
+        function handleCopyEvent(e) { if (!testActive) return; e.preventDefault(); alert('Copying test content is strictly prohibited.'); }
+        
+        function enableAntiCheat() {
+            testActive = true;
+            document.addEventListener('visibilitychange', handleTabSwitch);
+            document.addEventListener('keydown', handleKeyBlock, true);
+            document.addEventListener('contextmenu', handleRightClick);
+            window.addEventListener('blur', handleWindowBlur);
+            document.addEventListener('copy', handleCopyEvent);
+            document.addEventListener('cut', handleCopyEvent);
+            document.body.classList.add('no-select');
+            try { document.documentElement.requestFullscreen().catch(() => {}); } catch(e) {}
+        }
+
+        const setupDiv = document.getElementById('interviewSetup');
+        const proctoringContainer = document.getElementById('proctoringContainer');
+        const cameraFeed = document.getElementById('cameraFeed');
+        const chatContainer = document.getElementById('interviewChatContainer');
+        const btnStart = document.getElementById('btnStartInterview');
+
+        const chatInput = document.getElementById('interviewInput');
+        const sendBtn = document.getElementById('interviewSendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // TIMER LOGIC
+        let countdownTimer = null;
+        let remainingSeconds = 0;
+
+        function startTimer(minutes) {
+            clearInterval(countdownTimer);
+            const timerHeader = document.getElementById('timerHeader');
+            if (!minutes || minutes <= 0) {
+                timerHeader.style.display = 'none';
+                return;
+            }
+            
+            remainingSeconds = minutes * 60;
+            const display = document.getElementById('countdownDisplay');
+            timerHeader.style.display = 'flex';
+
+            countdownTimer = setInterval(() => {
+                remainingSeconds--;
+                const m = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                const s = (remainingSeconds % 60).toString().padStart(2, '0');
+                display.textContent = `TIME: ${m}:${s}`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownTimer);
+                    display.textContent = "TIME: 00:00";
+                    autoFailTimeExceeded();
+                }
+            }, 1000);
+        }
+
+        function autoFailTimeExceeded() {
+            chatInput.value = "[SYSTEM AUTO-SUBMIT]: The candidate failed to answer within the time limit. Evaluate this as a complete failure.";
+            sendMessage();
+        }
+
+        // Start Interview Event
+        btnStart.addEventListener('click', async () => {
+            const role = document.getElementById('setupRole').value.trim() || "Software Engineer";
+            const exp = document.getElementById('setupExp').value;
+            const stack = document.getElementById('setupStack').value.trim() || "General";
+            const company = document.getElementById('setupCompany').value.trim() || "Unknown Company";
+
+            // WebRTC Camera Prompt
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                cameraFeed.srcObject = stream;
+            } catch (err) {
+                alert("Please allow camera access to begin the proctored interview.");
+                return;
+            }
+
+            // Enable Security
+            enableAntiCheat();
+
+            // Swap UI
+            setupDiv.style.display = 'none';
+            proctoringContainer.style.display = 'flex';
+            chatContainer.style.display = 'flex';
+
+            chatMessages.innerHTML = `<div style="align-self: flex-start; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 15px; border-radius: 15px; font-size: 0.95rem; color: #cbd5e1;">Initializing VarGo Pro-Proctored Interview Matrix for ${company}...</div>`;
+
+            try {
+                const res = await fetch('${API_BASE_URL}/interview_start', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ role, experience: exp, stack, company })
+                });
+                
+                const data = await res.json();
+                chatMessages.innerHTML += `<div style="align-self: flex-start; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 15px; border-radius: 15px; font-size: 0.95rem; max-width: 80%; white-space: pre-wrap;">${data.message || 'Ready. Please type "start" to begin.'}</div>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                if (data.time_limit) startTimer(data.time_limit);
+            } catch (err) {
+                chatMessages.innerHTML += `<div style="color:#ef4444; padding:15px;">Failed to initialize Interview Setup Backend.</div>`;
+            }
+        });
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if(!text) return;
+
+            // append user message
+            const userDiv = document.createElement('div');
+            userDiv.style.cssText = 'align-self: flex-end; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; padding: 15px; border-radius: 15px; font-size: 0.95rem; max-width: 80%;';
+            userDiv.textContent = text;
+            chatMessages.appendChild(userDiv);
+
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Loading indicator
+            const aiDiv = document.createElement('div');
+            aiDiv.style.cssText = 'align-self: flex-start; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 15px; border-radius: 15px; font-size: 0.95rem; max-width: 80%; white-space: pre-wrap; color: #94a3b8; transition: 0.3s;';
+            aiDiv.textContent = 'Analyzing response...';
+            chatMessages.appendChild(aiDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                clearInterval(countdownTimer); // pause timer while waiting for VarGo
+                const res = await fetch('${API_BASE_URL}/interview_chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message: text }) // The backend expects InterviewChatRequest { message: str }
+                });
+
+                const data = await res.json();
+                aiDiv.style.color = '#e2e8f0';
+                aiDiv.innerHTML = (data.message || 'No response').replace(/\n/g, '<br>');
+                
+                if (data.time_limit) { 
+                    startTimer(data.time_limit); 
+                } else {
+                    document.getElementById('timerHeader').style.display = 'none';
+                }
+            } catch (err) {
+                aiDiv.style.background = 'rgba(255, 0, 0, 0.1)';
+                aiDiv.style.borderColor = 'rgba(255, 0, 0, 0.2)';
+                aiDiv.style.color = '#f87171';
+                aiDiv.textContent = 'Failed to connect to Interview server.';
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+    "venvPath": "d:/careerforgeai",
+    "venv": "venv",
+    "extraPaths": [
+        "d:/careerforgeai",
+        "d:/careerforgeai/backend"
+    ],
+    "reportMissingModuleSource": "none",
+    "reportMissingTypeStubs": "none"
+}

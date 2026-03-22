@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore non-technical career paths with salaries and skills — CareerforgeAI">
+    <title>Career Explorer — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .explorer-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px 100px;
+        }
+        .explorer-header {
+            text-align: center;
+            margin-bottom: 50px;
+            margin-top: 40px;
+        }
+        .explorer-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .explorer-header p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .careers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .career-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: default;
+        }
+        .career-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(236, 72, 153, 0.3);
+            box-shadow: 0 12px 40px rgba(236, 72, 153, 0.1);
+        }
+        .career-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 16px;
+        }
+        .career-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+        .career-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+        .career-card .description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .career-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        .meta-label {
+            color: #64748b;
+            min-width: 65px;
+        }
+        .meta-value {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        .meta-value.salary {
+            color: #10b981;
+        }
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .skill-tag {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #a5b4fc;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .btn-explore {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px;
+            color: #f0abfc;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-explore:hover {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.25));
+            color: white;
+            transform: translateX(4px);
+        }
+        .growth-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .growth-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #ec4899, #a855f7);
+            transition: width 0.8s ease;
+        }
+        .back-link {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 18px;
+            border-radius: 12px;
+            color: #cad4e0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            z-index: 1001;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #ec4899;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .careers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <a href="/non-tech-features.html" class="back-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+    </a>
+
+    <main class="explorer-wrapper">
+        <div class="explorer-header">
+            <h1>Career <span style="background: linear-gradient(135deg, #ec4899, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Explorer</span></h1>
+            <p>Discover non-technical career paths with real salary data, required skills, and growth potential</p>
+        </div>
+
+        <div class="careers-grid" id="careersGrid">
+            <!-- Cards injected by JS -->
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script>
+        const grid = document.getElementById('careersGrid');
+
+        async function loadCareers() {
+            grid.innerHTML = '<div style="color: white; grid-column: 1/-1; text-align: center; padding: 40px;">Generating live AI career data...</div>';
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/career/explore`);
+                const data = await res.json();
+                
+                grid.innerHTML = '';
+                
+                const bgs = [
+                    'rgba(236, 72, 153, 0.1)', 'rgba(168, 85, 247, 0.1)', 
+                    'rgba(59, 130, 246, 0.1)', 'rgba(16, 185, 129, 0.1)',
+                    'rgba(245, 158, 11, 0.1)', 'rgba(99, 102, 241, 0.1)'
+                ];
+                
+                data.careers.forEach((career, i) => {
+                    const bg = bgs[i % bgs.length];
+                    const card = document.createElement('div');
+                    card.className = 'career-card';
+                    card.innerHTML = `
+                        <div class="career-card-header">
+                            <div class="career-icon" style="background: ${bg}">${career.icon || '💼'}</div>
+                            <h3>${career.title}</h3>
+                        </div>
+                        <p class="description">${career.description}</p>
+                        <div class="career-meta">
+                            <div class="meta-row">
+                                <span class="meta-label">Salary</span>
+                                <span class="meta-value salary">${career.salary}</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">Growth</span>
+                                <span class="meta-value">${career.growth}%</span>
+                            </div>
+                            <div class="growth-bar"><div class="growth-fill" style="width: ${career.growth}%"></div></div>
+                        </div>
+                        <div class="skills-tags">
+                            ${career.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+                        </div>
+                        <a href="/expert-chat.html" class="btn-explore">
+                            Learn more →
+                        </a>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                grid.innerHTML = '<div style="color: #ef4444; grid-column: 1/-1; text-align: center; padding: 40px;">Failed to load live career data. Please check backend.</div>';
+            }
+        }
+
+        loadCareers();
+    </script>
+</body>
+</html>

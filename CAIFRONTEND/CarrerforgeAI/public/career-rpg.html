@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System V4 — CareerForgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/career-rpg.css">
+    <style>
+        body {
+            background: #0a0a14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .loading-container {
+            text-align: center;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99,102,241,0.1);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <p>INITIALIZING SYSTEM V4...</p>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/career-rpg.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait a small bit for CareerRPG to initialize
+            setTimeout(() => {
+                const engine = window.careerRPGEngineV4;
+                if (engine) {
+                    engine.openModal();
+                    
+                    // Also prevent the modal from being closed on this specific page 
+                    // or redirect back to home if closed.
+                    const originalClose = engine.closeModal.bind(engine);
+                    engine.closeModal = () => {
+                        window.history.back();
+                    };
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

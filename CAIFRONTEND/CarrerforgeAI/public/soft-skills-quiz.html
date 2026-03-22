@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Assess your soft skills with CareerforgeAI's interactive quiz">
+    <title>Soft Skills Quiz — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .quiz-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+        }
+        .quiz-header {
+            text-align: center;
+            margin: 40px 0 40px;
+        }
+        .quiz-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .quiz-header p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+        .quiz-container {
+            width: 100%;
+            max-width: 700px;
+        }
+        .question-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .question-card:hover {
+            border-color: rgba(236, 72, 153, 0.2);
+        }
+        .q-number {
+            font-size: 0.75rem;
+            color: #ec4899;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .q-category {
+            font-size: 0.7rem;
+            color: #64748b;
+            background: rgba(255,255,255,0.05);
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+        .q-text {
+            font-size: 1.05rem;
+            color: #e2e8f0;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #94a3b8;
+            font-size: 0.92rem;
+        }
+        .option:hover {
+            background: rgba(236, 72, 153, 0.06);
+            border-color: rgba(236, 72, 153, 0.2);
+            color: #e2e8f0;
+        }
+        .option.selected {
+            background: rgba(236, 72, 153, 0.12);
+            border-color: rgba(236, 72, 153, 0.4);
+            color: #fff;
+        }
+        .option .radio {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .option.selected .radio {
+            border-color: #ec4899;
+            background: #ec4899;
+        }
+        .option.selected .radio::after {
+            content: '✓';
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899, #a855f7);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            display: none;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(236, 72, 153, 0.4);
+        }
+        .btn-submit.visible { display: block; }
+
+        /* Results */
+        .results-container {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+        }
+        .results-container.visible { display: block; }
+        .score-overview {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .total-score {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        .total-label {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+        .category-scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .cat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 22px;
+        }
+        .cat-card h4 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .cat-score {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .cat-bar {
+            height: 5px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .cat-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+        .tips-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .tips-card h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .tip-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .tip-icon { flex-shrink: 0; }
+        .btn-retake {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #cad4e0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-retake:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .back-link {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 18px;
+            border-radius: 12px;
+            color: #cad4e0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            z-index: 1001;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #ec4899;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .category-scores { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <a href="/non-tech-features.html" class="back-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+    </a>
+
+    <main class="quiz-wrapper">
+        <div class="quiz-header">
+            <h1>AI Soft Skills <span style="background: linear-gradient(135deg, #ec4899, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Simulator</span></h1>
+            <p>Generate highly realistic, role-specific situational judgment scenarios graded by AI.</p>
+        </div>
+
+        <div class="progress-bar" id="progressArea" style="display: none;"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+
+        <!-- STATE 1: SETUP -->
+        <div class="quiz-container" id="setupContainer">
+            <div class="question-card" style="text-align: center;">
+                <h3 style="color: white; margin-bottom: 20px; font-size: 1.3rem;">Customize Your Simulator</h3>
+                <input type="text" id="roleInput" placeholder="Enter your target role (e.g. Marketing Manager)" style="width: 100%; max-width: 400px; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; margin-bottom: 20px; outline: none;">
+                <br>
+                <button class="btn-submit visible" id="generateBtn" style="display: inline-block; max-width: 300px; margin: 0 auto; background: linear-gradient(135deg, #ec4899, #a855f7);" onclick="generateQuiz()">Generate Scenarios</button>
+            </div>
+        </div>
+
+        <!-- STATE 2: QUIZ -->
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <!-- Questions injected by JS -->
+        </div>
+        <button class="btn-submit" id="submitBtn" onclick="submitAnswers()">Evaluate Answers</button>
+
+        <!-- STATE 3: RESULTS -->
+        <div class="results-container" id="resultsContainer">
+            <!-- Injected by JS -->
+        </div>
+    </main>
+    <script src="/js/config.js"></script>
+    <script>
+        let quizData = [];
+        let answers = {}; // { qIndex: { category, points } }
+
+        const setupContainer = document.getElementById('setupContainer');
+        const roleInput = document.getElementById('roleInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const quizContainer = document.getElementById('quizContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const progressArea = document.getElementById('progressArea');
+        const progressFill = document.getElementById('progressFill');
+
+        async function generateQuiz() {
+            const role = roleInput.value.trim() || 'General Professional';
+            generateBtn.textContent = 'Generating...';
+            generateBtn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/soft-skills/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role })
+                });
+                const data = await res.json();
+                quizData = data.quiz;
+                
+                renderQuiz();
+            } catch(e) {
+                alert("Failed to generate quiz. Please check backend.");
+                generateBtn.textContent = 'Generate Scenarios';
+                generateBtn.disabled = false;
+            }
+        }
+
+        function renderQuiz() {
+            setupContainer.style.display = 'none';
+            progressArea.style.display = 'block';
+            quizContainer.style.display = 'block';
+            quizContainer.innerHTML = '';
+
+            quizData.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="q-number">Scenario ${i + 1} <span class="q-category">${q.category}</span></div>
+                    <div class="q-text" style="font-weight: 400; font-size: 1.1rem; line-height: 1.6;">${q.scenario}</div>
+                    <div class="options" id="opts-${i}" style="margin-top: 20px;">
+                        ${q.options.map((opt, j) => `
+                            <div class="option" onclick="selectOption(this, ${i}, '${q.category}', ${opt.points})">
+                                <div class="radio"></div>
+                                ${opt.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(card);
+            });
+        }
+
+        function selectOption(el, qIndex, category, points) {
+            const optionsDiv = document.getElementById(`opts-${qIndex}`);
+            optionsDiv.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            answers[qIndex] = { category, points };
+
+            const answered = Object.keys(answers).length;
+            progressFill.style.width = `${(answered / quizData.length) * 100}%`;
+
+            if (answered === quizData.length) {
+                submitBtn.classList.add('visible');
+            }
+        }
+
+        async function submitAnswers() {
+            submitBtn.textContent = 'Evaluating...';
+            submitBtn.disabled = true;
+            
+            const answersArray = Object.values(answers);
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/soft-skills/evaluate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers: answersArray })
+                });
+                const report = await res.json();
+                
+                renderResults(answersArray, report);
+            } catch(e) {
+                alert("Failed to evaluate answers.");
+                submitBtn.textContent = 'Evaluate Answers';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function renderResults(answersArray, report) {
+            quizContainer.style.display = 'none';
+            submitBtn.style.display = 'none';
+            progressArea.style.display = 'none';
+            resultsContainer.classList.add('visible');
+
+            const totalPoints = answersArray.reduce((acc, curr) => acc + curr.points, 0);
+            const maxPoints = quizData.length * 5;
+            const percentage = Math.round((totalPoints / maxPoints) * 100);
+
+            let grade = 'Developing';
+            if (percentage >= 90) grade = 'Outstanding';
+            else if (percentage >= 75) grade = 'Strong';
+            else if (percentage >= 60) grade = 'Good';
+            else if (percentage >= 45) grade = 'Fair';
+
+            resultsContainer.innerHTML = `
+                <div class="score-overview">
+                    <div class="total-score">${percentage}%</div>
+                    <div class="total-label">${grade} — Soft Skills Fitness</div>
+                    <p style="color: #cbd5e1; margin-top: 15px; font-size: 1.05rem; line-height: 1.6;">${report.overall_feedback}</p>
+                </div>
+
+                <div class="category-scores">
+                    <div class="cat-card">
+                        <h4 style="color: #4ade80;">👍 Core Strengths</h4>
+                        <ul style="color: #e2e8f0; padding-left: 20px; line-height: 1.8;">
+                            ${report.strengths.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="cat-card">
+                        <h4 style="color: #f87171;">⚠️ Growth Areas</h4>
+                        <ul style="color: #e2e8f0; padding-left: 20px; line-height: 1.8;">
+                            ${report.weaknesses.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tips-card">
+                    <h3>💡 Actionable Action Plan</h3>
+                    ${report.actionable_tips.map(tipObj => `
+                        <div class="tip-item">
+                            <span class="tip-icon">→</span> 
+                            <strong>${tipObj.category}:</strong> ${tipObj.tip}
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn-retake" onclick="location.reload()">🔄 Generate New Scenario Matrix</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

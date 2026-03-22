@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review System — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 60px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-box {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .message.bot {
+            background: rgba(255, 255, 255, 0.08);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message.user {
+            background: #6366f1;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .message.success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message.error {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #fda4af;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-input-area {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .chat-input:focus { border-color: #6366f1; }
+        .send-btn {
+            background: #6366f1;
+            border: none;
+            border-radius: 12px;
+            padding: 0 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .send-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .rating-area {
+            padding: 10px 20px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .rating-area span { color: #64748b; font-size: 0.85rem; }
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+        .star-btn.active, .star-btn:hover { opacity: 1; }
+    </style>
+</head>
+<body class="page-loaded">
+    <div class="bg-overlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header"><div class="logo-text">Menu</div></div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">??</span><span>Home</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">??</span><span>Contact Developers</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link active">
+                    <span class="link-icon">??</span><span>Review System</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link"><span>Terms &amp; Conditions</span></a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chat-container">
+            <h1 class="title-small" style="text-align: center;">Review <span class="accent">System</span></h1>
+            <div class="chat-box fade-in">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot" id="greetMsg">
+                        Hello! ?? How was your experience with CareerforgeAI? We'd love to hear your feedback.
+                    </div>
+                </div>
+
+                <!-- Star Rating -->
+                <div class="rating-area">
+                    <span>Rate us:</span>
+                    <button class="star-btn" data-star="1">?</button>
+                    <button class="star-btn" data-star="2">?</button>
+                    <button class="star-btn" data-star="3">?</button>
+                    <button class="star-btn" data-star="4">?</button>
+                    <button class="star-btn" data-star="5">?</button>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="messageInput" placeholder="?? Share your experience...">
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script>
+        const BACKEND_URL = API_BASE_URL;
+        let selectedRating = null;
+
+        // Auto-read username from localStorage (set during login)
+        const userName = localStorage.getItem('userName') || 'Anonymous';
+
+        // Personalize greeting
+        document.getElementById('greetMsg').textContent =
+            `Hello, ${userName}! ?? How was your experience with CareerforgeAI? Share your feedback below.`;
+
+        // Star rating
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedRating = parseInt(btn.dataset.star);
+                document.querySelectorAll('.star-btn').forEach((b, i) => {
+                    b.classList.toggle('active', i < selectedRating);
+                });
+            });
+        });
+
+        function addMessage(text, type = 'bot') {
+            const msgs = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const message = document.getElementById('messageInput').value.trim();
+
+            if (!message) { addMessage('?? Please type your message first!', 'error'); return; }
+
+            addMessage(`${userName}: ${message}`, 'user');
+            document.getElementById('messageInput').value = '';
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/reviews`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: userName, message, rating: selectedRating })
+                });
+                if (res.ok) {
+                    addMessage('? Thank you for your feedback! Our team will review it shortly.', 'success');
+                    selectedRating = null;
+                    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('active'));
+                } else {
+                    addMessage('? Something went wrong. Please try again.', 'error');
+                }
+            } catch (err) {
+                addMessage('?? Cannot connect to the server. Make sure the FastAPI backend is running.', 'error');
+            } finally {
+                document.getElementById('sendBtn').disabled = false;
+            }
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('sendBtn').click();
+        });
+    </script>
+</body>
+</html>

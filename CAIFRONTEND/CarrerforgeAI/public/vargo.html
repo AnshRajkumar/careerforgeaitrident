@@ -1,0 +1,529 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with VarGo — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/features.css">
+    <style>
+        .vargo-chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-header {
+            padding: 24px 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .chat-header .vargo-avatar-small {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #6366f1;
+        }
+
+        .chat-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .vargo-message {
+            align-self: flex-start;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 24px 32px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px 20px;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-send {
+            padding: 0 24px;
+            height: 48px;
+            background: #6366f1;
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-send:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-mic {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-mic:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-mic.listening {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            animation: micPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes micPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+
+        .btn-speaker {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .btn-speaker:hover {
+            color: #6366f1;
+            border-color: #6366f1;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Chat History Sidebar -->
+    <div id="chatSidebar" style="position: fixed; left: -320px; top: 0; width: 320px; height: 100vh; background: rgba(15,15,25,0.97); backdrop-filter: blur(25px); border-right: 1px solid rgba(255,255,255,0.08); z-index: 1000; transition: left 0.35s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; padding: 0;">
+        <div style="padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.1rem; color: #e2e8f0; margin: 0;">💬 Chat History</h3>
+            <button onclick="toggleSidebar()" style="background: none; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">✕</button>
+        </div>
+        <button id="newChatBtn" onclick="startNewChat()" style="margin: 16px; padding: 12px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s;">+ New Chat</button>
+        <div id="sessionsList" style="flex: 1; overflow-y: auto; padding: 0 16px 16px;"></div>
+    </div>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+    <main class="vargo-chat-wrapper">
+        <a href="/features.html" class="back-link">
+            <span>←</span> Back to Tools
+        </a>
+
+        <div class="chat-container">
+        <div class="chat-header" style="justify-content: space-between; display: flex; align-items: center; padding: 20px 30px; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button onclick="toggleSidebar()" style="background: none; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s;" title="Chat History">☰</button>
+                    <img src="/img/vargo-avatar.png" alt="VarGo" class="vargo-avatar-small">
+                    <div>
+                        <h2>VarGo AI</h2>
+                        <span style="font-size: 0.75rem; color: #10b981;">● Online</span>
+                    </div>
+                </div>
+                <button id="autoSpeakToggle" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease;">
+                    🔇 Auto-Speak: OFF
+                </button>
+            </div>
+
+            <div class="chat-messages">
+                <div class="message vargo-message">
+                    Hello! I'm VarGo, your AI career assistant. How can I help you today? You can type or click 🎤 to speak.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <button class="btn-mic" id="micBtn" title="Hold or click to speak">🎤</button>
+                <input type="text" class="chat-input" id="vargoInput" placeholder="Type or speak your message...">
+                <button class="btn-send" id="vargoSendBtn">Send</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script>
+        const chatInput = document.getElementById('vargoInput');
+        const sendBtn = document.getElementById('vargoSendBtn');
+        const micBtn = document.getElementById('micBtn');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        // ---- Web Speech API Setup ----
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                chatInput.value = transcript;
+                stopListening();
+                // Auto-send after voice input
+                sendMessage();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                stopListening();
+                if (event.error === 'not-allowed') {
+                    alert('Microphone access denied. Please allow microphone permissions in your browser settings.');
+                }
+            };
+
+            recognition.onend = () => {
+                stopListening();
+            };
+        }
+
+        function startListening() {
+            if (!recognition) {
+                alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+                return;
+            }
+            isListening = true;
+            micBtn.classList.add('listening');
+            micBtn.title = 'Listening... click to stop';
+            recognition.start();
+        }
+
+        function stopListening() {
+            isListening = false;
+            micBtn.classList.remove('listening');
+            micBtn.title = 'Click to speak';
+            try { recognition.stop(); } catch(e) {}
+        }
+
+        micBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        });
+
+        // ---- Text-to-Speech (VarGo reads responses) ----
+        let autoSpeakEnabled = false;
+        const autoSpeakBtn = document.getElementById('autoSpeakToggle');
+        
+        autoSpeakBtn.addEventListener('click', () => {
+            autoSpeakEnabled = !autoSpeakEnabled;
+            if (autoSpeakEnabled) {
+                autoSpeakBtn.innerHTML = '🔊 Auto-Speak: ON';
+                autoSpeakBtn.style.background = 'rgba(99, 102, 241, 0.2)';
+                autoSpeakBtn.style.color = '#ffffff';
+                autoSpeakBtn.style.borderColor = '#6366f1';
+            } else {
+                autoSpeakBtn.innerHTML = '🔇 Auto-Speak: OFF';
+                autoSpeakBtn.style.background = 'rgba(255,255,255,0.05)';
+                autoSpeakBtn.style.color = '#cbd5e1';
+                autoSpeakBtn.style.borderColor = 'rgba(255,255,255,0.1)';
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        });
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // stop any current speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // ---- Chat Logic ----
+        function appendVarGoMessage(text) {
+            const vargoDiv = document.createElement('div');
+            vargoDiv.className = 'message vargo-message';
+            vargoDiv.style.cssText = 'display: flex; align-items: flex-start; gap: 0;';
+            
+            const textSpan = document.createElement('span');
+            textSpan.style.flex = '1';
+            textSpan.textContent = text;
+            vargoDiv.appendChild(textSpan);
+
+            const speakerBtn = document.createElement('button');
+            speakerBtn.className = 'btn-speaker';
+            speakerBtn.title = 'Listen to this response';
+            speakerBtn.textContent = '🔊';
+            speakerBtn.addEventListener('click', () => speakText(text));
+            vargoDiv.appendChild(speakerBtn);
+
+            chatMessages.appendChild(vargoDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return text;
+        }
+
+        let currentAbortController = null;
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if(!text) return;
+
+            // append user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            userDiv.textContent = text;
+            chatMessages.appendChild(userDiv);
+
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (currentAbortController) {
+                currentAbortController.abort(); // Cancel any existing LLM task
+            }
+            currentAbortController = new AbortController();
+
+            try {
+                const res = await fetch('${API_BASE_URL}/vargo_chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ query: text, session_id: currentSessionId }),
+                    signal: currentAbortController.signal
+                });
+
+                const data = await res.json();
+                const responseText = data.response || 'No response';
+                appendVarGoMessage(responseText);
+                
+                // V16: Log activity to MongoDB for progress dashboard
+                if (window.logActivity) {
+                    logActivity('vargo_chat', `Asked VarGo: "${text.substring(0, 60)}${text.length > 60 ? '...' : ''}"`, responseText.substring(0, 80));
+                }
+                
+                // Only auto-speak if explicitly enabled by user
+                if (autoSpeakEnabled) {
+                    speakText(responseText);
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    console.log("Fetch aborted because user left or started new request.");
+                    return;
+                }
+                const errDiv = document.createElement('div');
+                errDiv.className = 'message vargo-message';
+                errDiv.style.color = '#f87171';
+                errDiv.textContent = 'Failed to connect to VarGo server.';
+                chatMessages.appendChild(errDiv);
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
+        });
+
+        // ---- Browser Exit Safety Net (Kill Switches) ----
+        window.addEventListener('beforeunload', () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+        });
+
+        // ---- V15: Session Management ----
+        let currentSessionId = 'session_' + Date.now();
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('chatSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isOpen = sidebar.style.left === '0px';
+            sidebar.style.left = isOpen ? '-320px' : '0px';
+            overlay.style.display = isOpen ? 'none' : 'block';
+            if (!isOpen) loadSessions();
+        }
+
+        function startNewChat() {
+            currentSessionId = 'session_' + Date.now();
+            chatMessages.innerHTML = '<div class="message vargo-message">Hello! I\'m VarGo, your AI career assistant. How can I help you today?</div>';
+            toggleSidebar();
+        }
+
+        async function loadSessions() {
+            const list = document.getElementById('sessionsList');
+            list.innerHTML = '<div style="color: #94a3b8; font-size: 0.85rem; text-align: center; padding: 20px;">Loading...</div>';
+            try {
+                const res = await fetch('${API_BASE_URL}/api/vargo/sessions');
+                const sessions = await res.json();
+                list.innerHTML = '';
+                if (!sessions || sessions.length === 0) {
+                    list.innerHTML = '<div style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 30px;">No previous chats yet.</div>';
+                    return;
+                }
+                sessions.forEach(s => {
+                    const item = document.createElement('div');
+                    item.style.cssText = 'padding: 12px 14px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: all 0.2s;';
+                    const isActive = s.session_id === currentSessionId;
+                    if (isActive) item.style.borderColor = '#6366f1';
+                    item.innerHTML = `
+                        <div style="color: ${isActive ? '#818cf8' : '#e2e8f0'}; font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.preview || 'New Chat'}</div>
+                        <div style="color: #64748b; font-size: 0.75rem; margin-top: 4px;">${s.updated_at ? new Date(s.updated_at).toLocaleDateString() : ''}</div>
+                    `;
+                    item.onmouseover = () => { item.style.background = 'rgba(99,102,241,0.08)'; };
+                    item.onmouseout = () => { item.style.background = 'rgba(255,255,255,0.03)'; };
+                    item.onclick = () => loadSession(s.session_id);
+                    list.appendChild(item);
+                });
+            } catch(e) {
+                list.innerHTML = '<div style="color: #ef4444; font-size: 0.85rem; text-align: center; padding: 20px;">Failed to load history.</div>';
+            }
+        }
+
+        async function loadSession(sessionId) {
+            currentSessionId = sessionId;
+            toggleSidebar();
+            chatMessages.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 40px;">Loading conversation...</div>';
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/vargo/session/${sessionId}`);
+                const data = await res.json();
+                chatMessages.innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            const userDiv = document.createElement('div');
+                            userDiv.className = 'message user-message';
+                            userDiv.textContent = msg.text;
+                            chatMessages.appendChild(userDiv);
+                        } else {
+                            appendVarGoMessage(msg.text);
+                        }
+                    });
+                } else {
+                    chatMessages.innerHTML = '<div class="message vargo-message">Hello! I\'m VarGo, your AI career assistant. How can I help you today?</div>';
+                }
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch(e) {
+                chatMessages.innerHTML = '<div class="message vargo-message" style="color: #f87171;">Failed to load this conversation.</div>';
+            }
+        }
+    </script>
+</body>
+</html>

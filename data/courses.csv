@@ -1,0 +1,90 @@
+skill,course,platform
+Python,"Complete Python Bootcamp From Zero to Hero",Udemy
+JavaScript,"The Complete JavaScript Course 2024: From Zero to Expert!",Udemy
+Java,"Java Programming and Software Engineering Fundamentals",Coursera
+C++,"C++ For C Programmers",Coursera
+C#,"C# Developers: Learn the Art of Writing Clean Code",Udemy
+Node.js,"Node.js API Masterclass With Express & MongoDB",Udemy
+Django,"Python Django - The Practical Guide",Udemy
+React,"React - The Complete Guide (incl Hooks)",Udemy
+Vue,"Vue - The Complete Guide",Udemy
+TypeScript,"Understanding TypeScript - 2024 Edition",Udemy
+Redux,"Modern React with Redux",Udemy
+HTML5,"HTML, CSS, and Javascript for Web Developers",Coursera
+CSS3,"Advanced CSS and Sass: Flexbox Grid Animations",Udemy
+Responsive Design,"Responsive Web Design Certification",freeCodeCamp
+Web Performance,"Web Performance Optimization",Udacity
+SQL,"The Complete SQL Bootcamp 2024: Go from Zero to Hero",Udemy
+PostgreSQL,"Mastering PostgreSQL for Advanced Database Management",Udemy
+MongoDB,"MongoDB - The Complete Developer's Guide",Udemy
+Docker,"Docker Mastery: with Kubernetes +Swarm",Udemy
+REST API,"REST API Design Development & Management",Udemy
+Microservices,"Microservices with Node JS and React",Udemy
+Git,"The Git & GitHub Bootcamp",Udemy
+Machine Learning,"Machine Learning Specialization by Andrew Ng",Coursera
+Statistics,"Statistics with Python Specialization",Coursera
+Data Visualization,"Data Visualization with Tableau Specialization",Coursera
+Pandas,"Data Analysis with Pandas and Python",Udemy
+Tableau,"Tableau 2024 A-Z: Hands-On Tableau Training for Data Science",Udemy
+R,"Data Science: R Basics",edX
+Deep Learning,"Deep Learning Specialization",Coursera
+TensorFlow,"TensorFlow Developer Certificate in 2024: Zero to Mastery",Udemy
+PyTorch,"PyTorch for Deep Learning in 2024: Zero to Mastery",Udemy
+NLP,"Natural Language Processing Specialization",Coursera
+Computer Vision,"Computer Vision Basics",Coursera
+Linux,"Linux Mastery: Master the Linux Command Line in 11.5 Hours",Udemy
+AWS,"Ultimate AWS Certified Solutions Architect Associate",Udemy
+Azure,"AZ-900: Microsoft Azure Fundamentals Exam Prep",Udemy
+GCP,"Google Cloud Engineer Learning Path",Coursera
+Kubernetes,"Kubernetes for the Absolute Beginners - Hands-on",Udemy
+CI/CD,"Continuous Integration and Continuous Delivery (CI/CD)",Coursera
+Jenkins,"Jenkins, From Zero To Hero: Become a DevOps Jenkins Master",Udemy
+Terraform,"HashiCorp Certified: Terraform Associate",Udemy
+Ansible,"Mastering Ansible",Udemy
+Cloud Security,"Cloud Security Basics",Coursera
+Infrastructure as Code,"Infrastructure as Code with Terraform",Udemy
+Networking,"The Complete Networking Fundamentals Course: Your CCNA Start",Udemy
+Ethical Hacking,"Learn Ethical Hacking From Scratch",Udemy
+Cryptography,"Cryptography I",Coursera
+Penetration Testing,"Penetration Testing and Ethical Hacking",edX
+Security Operations,"Cybersecurity Operations Fundamentals",Coursera
+Wireshark,"Wireshark: The Complete Wireshark Course for Network Analysts",Udemy
+Agile,"Agile Crash Course: Agile Project Management",Udemy
+Scrum,"Scrum Fundamentals Certified",SCRUMstudy
+Product Strategy,"Digital Product Management: Modern Fundamentals",Coursera
+Market Research,"Market Research Specialization",Coursera
+Data Analysis,"Google Data Analytics Professional Certificate",Coursera
+User Experience,"Google UX Design Professional Certificate",Coursera
+Jira,"Learn JIRA with real-world examples",Udemy
+Figma,"Figma UI UX Design Essentials",Udemy
+Sketch,"Sketch from A to Z: Become an App Designer",Udemy
+User Interface Design,"UI / UX Design Specialization",Coursera
+Prototyping,"Prototyping and Design",Coursera
+Wireframing,"Wireframing with Balsamiq",Udemy
+Adobe XD,"User Experience Design Essentials - Adobe XD UI UX Design",Udemy
+Swift,"iOS & Swift - The Complete iOS App Development Bootcamp",Udemy
+Kotlin,"Kotlin for Java Developers",Coursera
+React Native,"React Native - The Practical Guide",Udemy
+Flutter,"The Complete 2024 Flutter Development Bootcamp with Dart",Udemy
+iOS Development,"iOS App Development with Swift Specialization",Coursera
+Android Development,"Android App Development Specialization",Coursera
+Mobile UI,"Mobile App Design In Sketch 3: UX and UI Design From Scratch",Udemy
+Solidity,"Ethereum and Solidity: The Complete Developer's Guide",Udemy
+Smart Contracts,"Smart Contracts Specialization",Coursera
+Ethereum,"Blockchain Developer Bootcamp",Udemy
+Rust,"Rust Programming: The Complete Developer's Guide",Udemy
+Web3.js,"Web3.js - Build a Web3 App",Udemy
+Hadoop,"The Ultimate Hands-On Hadoop: Tame your Big Data!",Udemy
+Spark,"Apache Spark with Scala - Hands On with Big Data!",Udemy
+Kafka,"Apache Kafka Series - Learn Apache Kafka for Beginners",Udemy
+Data Modeling,"Data Modeling and Relational Database Design",Coursera
+ETL,"Data Warehousing and BI Certification Training",Simplilearn
+Unity,"Complete C# Unity Game Developer 3D",Udemy
+Unreal Engine,"Unreal Engine 5 C++ Developer: Learn C++ and Make Video Games",Udemy
+Game Physics,"Math and Physics for Video Games",Udemy
+3D Math,"Essential Mathematics for Machine Learning and AI",Coursera
+Game Design,"Game Design and Development Specialization",Coursera
+Selenium,"Selenium WebDriver with Java - Basics to Advanced",Udemy
+Automated Testing,"Automated Software Testing: Unit Testing, Coverage Criteria and Design for Testability",Coursera
+Manual Testing,"Software Testing (Manual Testing Core Concept)",Udemy
+API Testing,"Postman: The Complete Guide - REST API Testing",Udemy

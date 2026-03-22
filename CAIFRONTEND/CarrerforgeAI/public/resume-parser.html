@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Parser � CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .placeholder-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+        }
+        .back-btn {
+            margin-top: 30px;
+            color: #818cf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Back to Tools -->
+    <a href="/features" class="back-tools-btn" style="position:fixed;top:30px;left:80px;display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#cbd5e1;font-weight:600;font-size:0.85rem;text-decoration:none;z-index:1001;backdrop-filter:blur(10px);transition:all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='#6366f1';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#cbd5e1'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+    </a>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">??</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="container placeholder-content" style="width: 100%; max-width: 1200px; margin: 0 auto; padding-top: 40px; padding-bottom: 40px;">
+            <h1 class="title-small">Resume <span class="accent">Parser</span></h1>
+            <p class="subtitle">Upload your resume to extract skills and build your AI context.</p>
+            
+            <div style="background: rgba(255,255,255,0.03); padding: 50px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.5); backdrop-filter: blur(16px); margin-top: 30px; width: 100%; max-width: 600px; text-align: left;">
+                <label style="color: #e2e8f0; font-weight: 500; display: block; margin-bottom: 8px;">Target Career Role <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="targetRole" placeholder="e.g. Data Scientist, Frontend Developer" style="margin-bottom: 20px; color: white; width: 100%; padding: 16px 20px; font-size: 1.05rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; outline: none; transition: border-color 0.3s;" required onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+
+                <label style="color: #e2e8f0; font-weight: 500; display: block; margin-bottom: 8px;">Target Location <span style="font-size: 0.8rem; color: #94a3b8;">(Optional)</span></label>
+                <input type="text" id="targetLocation" placeholder="e.g. San Francisco, London, Berlin (Leave blank for Remote)" style="margin-bottom: 30px; color: white; width: 100%; padding: 16px 20px; font-size: 1.05rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                
+                <label style="color: #e2e8f0; font-weight: 500; display: block; margin-bottom: 8px;">Resume Document</label>
+                <label for="resumeFile" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; background: rgba(99,102,241,0.05); border: 2px dashed rgba(99,102,241,0.4); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; margin-bottom: 30px;" id="fileLabel" onmouseover="this.style.background='rgba(99,102,241,0.1)'" onmouseout="this.style.background='rgba(99,102,241,0.05)'">
+                    <span style="font-size: 3rem; margin-bottom: 12px; opacity: 0.8;">??</span>
+                    <span id="fileName" style="color: #cbd5e1; font-weight: 500; font-size: 1.1rem;">Click to browse PDF</span>
+                    <span style="color: #64748b; font-size: 0.85rem; margin-top: 8px;">Only PDF files supported</span>
+                </label>
+                <input type="file" id="resumeFile" accept="application/pdf" style="display: none;">
+                
+                <button id="uploadBtn" class="btn-send" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 12px; color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(99,102,241,0.4); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(99,102,241,0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(99,102,241,0.4)'">Analyze Resume</button>
+            </div>
+
+            <div id="resultsArea" style="margin-top: 30px; text-align: left; width: 100%; max-width: 800px; display: none;">
+                
+                <div style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <h3>Target Role Readiness</h3>
+                        <h1 id="readinessScore" style="color: #4ade80; font-size: 3rem; margin: 10px 0;">0%</h1>
+                        <p id="targetRoleDisplay" style="color: #9ca3af;"></p>
+                    </div>
+                    <div style="flex: 2; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <h3>Extracted Skills</h3>
+                        <div id="skillsList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
+                    <h3>Expert Guidance (Missing Skills)</h3>
+                    <p style="color: #9ca3af; margin-bottom: 10px; font-size: 0.9rem;">Focus on acquiring these skills to improve your readiness:</p>
+                    <div id="missingSkillsList" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <h3>Course Recommendations & Roadmap</h3>
+                    <div id="roadmapArea" style="margin-top: 15px; color: #e5e7eb; line-height: 1.6; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; font-family: monospace;"></div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px;">
+                    <h3 style="display: flex; align-items: center; justify-content: space-between;">
+                        <span>?? Real-World Job Vacancies</span>
+                        <span id="jobsCountBadge" style="font-size: 0.8rem; background: #6366f1; padding: 4px 10px; border-radius: 12px;">Searching API...</span>
+                    </h3>
+                    <p style="color: #9ca3af; margin-bottom: 10px; font-size: 0.85rem;" id="jobsLocationDisplay">Scanning open positions globally...</p>
+                    <div id="jobsList" style="margin-top: 15px; display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+                        <!-- Job cards injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script>
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('resumeFile');
+        const fileNameDisplay = document.getElementById('fileName');
+        const roleInput = document.getElementById('targetRole');
+        const resultsArea = document.getElementById('resultsArea');
+        const skillsList = document.getElementById('skillsList');
+        const readinessScore = document.getElementById('readinessScore');
+        const targetRoleDisplay = document.getElementById('targetRoleDisplay');
+        const missingSkillsList = document.getElementById('missingSkillsList');
+        const roadmapArea = document.getElementById('roadmapArea');
+
+        const targetLocationInput = document.getElementById('targetLocation');
+        const jobsList = document.getElementById('jobsList');
+        const jobsCountBadge = document.getElementById('jobsCountBadge');
+        const jobsLocationDisplay = document.getElementById('jobsLocationDisplay');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+                fileNameDisplay.style.color = '#4ade80';
+            } else {
+                fileNameDisplay.textContent = "Click to browse PDF";
+                fileNameDisplay.style.color = '#cbd5e1';
+            }
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            const role = roleInput.value.trim();
+            const location_city = targetLocationInput.value.trim();
+            
+            if(!role) {
+                alert("Please enter a target role.");
+                return;
+            }
+
+            if(!file) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            uploadBtn.textContent = "Analyzing Core Skills...";
+            uploadBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                // Phase 1: Resume Analysis
+                const res = await fetch(`${API_BASE_URL}/career_analysis?role=${encodeURIComponent(role)}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                const scoreValue = data.readiness_score.career_readiness_score !== undefined ? data.readiness_score.career_readiness_score : (data.readiness_score.score || 0);
+                readinessScore.innerHTML = `${scoreValue}% <span style="font-size: 1.2rem; color: #9ca3af; font-weight: normal;">(${data.readiness_score.level || 'Beginner'})</span>`;
+                targetRoleDisplay.textContent = "For: " + data.career_role;
+
+                skillsList.innerHTML = '';
+                if(data.detected_skills && data.detected_skills.length > 0) {
+                    data.detected_skills.forEach(skill => {
+                        const span = document.createElement('span');
+                        span.style.cssText = "background: rgba(99,102,241,0.2); color: #818cf8; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;";
+                        span.textContent = skill;
+                        skillsList.appendChild(span);
+                    });
+                } else {
+                    skillsList.textContent = "No skills detected or unable to parse.";
+                }
+
+                missingSkillsList.innerHTML = '';
+                if(data.missing_skills && data.missing_skills.length > 0) {
+                    data.missing_skills.forEach(skill => {
+                        const span = document.createElement('span');
+                        span.style.cssText = "background: rgba(239,68,68,0.2); color: #f87171; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;";
+                        span.textContent = skill;
+                        missingSkillsList.appendChild(span);
+                    });
+                } else {
+                    missingSkillsList.textContent = "You have all the required skills!";
+                }
+
+                if (Array.isArray(data.learning_path) && data.learning_path.length > 0) {
+                    roadmapArea.innerHTML = data.learning_path.map(item => 
+                        `<div style="margin-bottom: 10px; padding: 15px; background: rgba(0,0,0,0.5); border-radius: 8px; border-left: 4px solid #6366f1;">
+                            <strong style="color: #e2e8f0; font-size: 1.1rem; display: block; margin-bottom: 5px;">Focus on: ${item.skill}</strong>
+                            <span style="color: #cbd5e1; font-size: 0.95rem;">${item.course}</span> 
+                            <span style="font-size: 0.75rem; padding: 3px 8px; background: rgba(255,255,255,0.1); border-radius: 12px; margin-left: 10px; color: #94a3b8; vertical-align: middle;">${item.platform}</span>
+                        </div>`
+                    ).join('');
+                } else if (typeof data.learning_path === 'string') {
+                    roadmapArea.textContent = data.learning_path;
+                } else {
+                    roadmapArea.textContent = "You're fully ready! Keep practicing advanced projects.";
+                }
+                
+                resultsArea.style.display = 'block';
+
+                // V16: Log resume analysis activity to progress dashboard
+                if (window.logActivity) {
+                    logActivity('resume_upload', `Analyzed resume for "${data.career_role}"`, `Readiness: ${scoreValue}% � ${(data.detected_skills || []).length} skills found`);
+                }
+
+                // Phase 2: Fire Real-World Jobs Background Fetch
+                fetchJobs(data.career_role || role, location_city);
+
+            } catch(e) {
+                alert("Error connecting to backend.");
+            } finally {
+                uploadBtn.textContent = "Analyze Resume";
+                uploadBtn.disabled = false;
+            }
+        });
+
+        async function fetchJobs(mappedRole, location_city) {
+            jobsList.innerHTML = '<div style="color: #94a3b8; font-size: 0.9rem;">Bypassing CAPTCHAs and Scraping LinkedIn / Indeed... (this takes ~10s)</div>';
+            jobsCountBadge.textContent = "Scraping UI...";
+            jobsCountBadge.style.background = "#f59e0b";
+            jobsLocationDisplay.innerHTML = location_city ? `Hunting for <b>${mappedRole}</b> in <b>${location_city}</b>` : `Hunting globally for remote <b>${mappedRole}</b> roles`;
+            
+            try {
+                const query = `role=${encodeURIComponent(mappedRole)}&location=${encodeURIComponent(location_city)}`;
+                const res = await fetch(`${API_BASE_URL}/api/jobs/match?${query}`);
+                const jobs = await res.json();
+
+                jobsList.innerHTML = '';
+                if(jobs && jobs.length > 0) {
+                    jobsCountBadge.textContent = `${jobs.length} Found`;
+                    jobsCountBadge.style.background = "#10b981";
+
+                    jobs.forEach(job => {
+                        const card = document.createElement('div');
+                        card.style.cssText = "background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: space-between;";
+                        card.innerHTML = `
+                            <div>
+                                <strong style="color: #e2e8f0; font-size: 1.05rem; display: block; margin-bottom: 5px;">${job.title}</strong>
+                                <span style="color: #6366f1; font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 5px;">?? ${job.company || 'Unknown'}</span>
+                                <span style="color: #94a3b8; font-size: 0.85rem; display: block;">?? ${job.location || 'Remote'}</span>
+                            </div>
+                            <a href="${job.job_url}" target="_blank" style="margin-top: 15px; display: inline-block; width: 100%; text-align: center; padding: 8px 0; background: rgba(99,102,241,0.1); color: #818cf8; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">Apply Now ?</a>
+                        `;
+                        jobsList.appendChild(card);
+                    });
+                } else {
+                    jobsCountBadge.textContent = "0 Found";
+                    jobsCountBadge.style.background = "#ef4444";
+                    jobsList.innerHTML = '<div style="color: #94a3b8; font-size: 0.9rem;">No direct matching vacancies found in that specific location today. Try broadening your criteria.</div>';
+                }
+            } catch(e) {
+                jobsCountBadge.textContent = "Error";
+                jobsCountBadge.style.background = "#ef4444";
+                jobsList.innerHTML = '<div style="color: #ef4444; font-size: 0.9rem;">Failed to extract live job listings due to network or timeout issues.</div>';
+            }
+        }
+    </script>
+</body>
+</html>
+

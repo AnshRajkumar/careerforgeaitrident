@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Video Call — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { 
+            margin: 0; padding: 0; 
+            display: flex; flex-direction: column; 
+            height: 100vh; overflow: hidden; 
+            background: #0f172a; color: white; 
+            justify-content: center; align-items: center; 
+            font-family: 'Inter', sans-serif;
+        }
+
+        .call-header {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 20px 40px; background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px); display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+
+        .room-status { font-weight: 600; color: #f59e0b; display: flex; align-items: center; gap: 8px;}
+        .room-status.connected { color: #10b981; }
+        .room-status.disconnected { color: #ef4444; }
+
+        .video-grid {
+            display: flex; gap: 24px; width: 90%; max-width: 1400px; 
+            height: 70vh; margin-top: 60px; justify-content: center;
+        }
+
+        .video-container {
+            flex: 1; border-radius: 24px; overflow: hidden; 
+            position: relative; background: #1e293b;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .video-container.local { border: 2px solid #6366f1; }
+
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .video-label {
+            position: absolute; bottom: 20px; left: 20px;
+            background: rgba(0,0,0,0.6); padding: 6px 14px;
+            border-radius: 12px; font-weight: 600;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .controls {
+            margin-top: 40px; display: flex; gap: 20px;
+            background: rgba(0,0,0,0.3); padding: 15px 30px;
+            border-radius: 40px; border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: none; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        .btn-audio { background: rgba(255,255,255,0.1); color: white; }
+        .btn-audio.muted { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-video { background: rgba(255,255,255,0.1); color: white; }
+        .btn-video.stopped { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        .btn-end { 
+            background: #ef4444; color: white; width: auto; 
+            padding: 0 30px; border-radius: 30px; font-weight: 700;
+            font-size: 1rem;
+        }
+        .btn-end:hover { background: #dc2626; transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <div class="call-header">
+        <h2 style="margin: 0; font-size: 1.5rem;">📞 Secure P2P Call</h2>
+        <div class="room-status" id="roomStatus">
+            <span style="font-size: 0.8em;">🟡</span> Waiting for Peer...
+        </div>
+    </div>
+
+    <div class="video-grid">
+        <!-- Local User (Student or Mentor) -->
+        <div class="video-container local">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div class="video-label" id="localLabel">You</div>
+        </div>
+
+        <!-- Remote Peer -->
+        <div class="video-container">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="video-label" id="remoteLabel">Peer Joining...</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn btn-audio" id="btnAudio" title="Mute Audio">🎤</button>
+        <button class="control-btn btn-video" id="btnVideo" title="Stop Video">📸</button>
+        <button class="control-btn btn-end" id="btnEnd">Leave Call</button>
+    </div>
+
+    <!-- We still load main.js to get FAB controls if needed, but video-call handles its own routing -->
+    <script src="/js/main.js"></script>
+    <script>
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const roomStatus = document.getElementById('roomStatus');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room') || 'default_room';
+        const role = urlParams.get('role') || 'Unknown';
+
+        // Update labels based on role
+        if (role === 'student') {
+            document.getElementById('localLabel').textContent = 'You (Student)';
+            document.getElementById('remoteLabel').textContent = 'Mentor';
+        } else if (role === 'mentor') {
+            document.getElementById('localLabel').textContent = 'You (Mentor)';
+            document.getElementById('remoteLabel').textContent = 'Student';
+        }
+
+        let localStream;
+        let peerConnection;
+        let ws;
+
+        const config = {
+            'iceServers': [
+                {'urls': 'stun:stun.l.google.com:19302'},
+                {'urls': 'stun:stun1.l.google.com:19302'}
+            ]
+        };
+
+        async function init() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localVideo.srcObject = localStream;
+            } catch (err) {
+                alert("Camera and Microphone access are strictly required to use the P2P Calling Architecture.");
+                window.history.back();
+                return;
+            }
+
+            // Connect to FastAPI WebSocket Signaling Server
+            ws = new WebSocket(`ws://127.0.0.1:8000/ws/call/${roomId}`);
+            
+            ws.onopen = () => {
+                console.log("Connected to Signaling Server.");
+                // Give the DOM and the peer a moment to settle, then the one who joins triggers an offer
+                setTimeout(() => {
+                    createOffer();
+                }, 1500);
+            };
+
+            ws.onmessage = async (message) => {
+                const data = JSON.parse(message.data);
+
+                if (data.type === 'offer') {
+                    console.log("Received Offer from Peer.");
+                    if (!peerConnection) createPeerConnection();
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    ws.send(JSON.stringify({ type: 'answer', answer: answer }));
+                }
+
+                if (data.type === 'answer') {
+                    console.log("Received Answer from Peer.");
+                    if (!peerConnection) return;
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                    updateStatus('Connected to Peer 🟢', 'connected');
+                }
+
+                if (data.type === 'candidate') {
+                    if (!peerConnection) return;
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                }
+
+                if (data.type === 'peer-disconnected') {
+                    updateStatus('Peer disconnected. Waiting... 🟡', '');
+                    remoteVideo.srcObject = null;
+                    if (peerConnection) {
+                        peerConnection.close();
+                        peerConnection = null;
+                        // Attempt to recreate connection to accept them back if they refresh
+                        createPeerConnection();
+                    }
+                }
+            };
+
+            ws.onerror = (e) => {
+                console.error("WebSocket Error: ", e);
+                updateStatus('Signaling Server Offline 🔴', 'disconnected');
+            }
+        }
+
+        function createPeerConnection() {
+            peerConnection = new RTCPeerConnection(config);
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = (event) => {
+                if (remoteVideo.srcObject !== event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                    updateStatus('Connected to Peer 🟢', 'connected');
+                }
+            };
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    ws.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+                }
+            };
+        }
+
+        async function createOffer() {
+            createPeerConnection();
+            try {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                ws.send(JSON.stringify({ type: 'offer', offer: offer }));
+            } catch (err) {
+                console.error("Error creating WebRTC offer:", err);
+            }
+        }
+
+        function updateStatus(text, className) {
+            roomStatus.textContent = text;
+            roomStatus.className = 'room-status ' + className;
+        }
+
+        // ---- Hardware Controls ----
+        let isAudioMuted = false;
+        let isVideoStopped = false;
+
+        document.getElementById('btnAudio').addEventListener('click', (e) => {
+            isAudioMuted = !isAudioMuted;
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) audioTrack.enabled = !isAudioMuted;
+            
+            const btn = e.currentTarget;
+            if (isAudioMuted) {
+                btn.classList.add('muted');
+                btn.innerHTML = '🔇';
+            } else {
+                btn.classList.remove('muted');
+                btn.innerHTML = '🎤';
+            }
+        });
+
+        document.getElementById('btnVideo').addEventListener('click', (e) => {
+            isVideoStopped = !isVideoStopped;
+            const videoTrack = localStream.getVideoTracks()[0];
+            if (videoTrack) videoTrack.enabled = !isVideoStopped;
+
+            const btn = e.currentTarget;
+            if (isVideoStopped) {
+                btn.classList.add('stopped');
+                btn.innerHTML = '🚫';
+            } else {
+                btn.classList.remove('stopped');
+                btn.innerHTML = '📸';
+            }
+        });
+
+        document.getElementById('btnEnd').addEventListener('click', () => {
+            if (peerConnection) peerConnection.close();
+            if (ws) ws.close();
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+            }
+            window.history.back();
+        });
+
+        // Initialize WebRTC Pipeline
+        init();
+
+    </script>
+</body>
+</html>

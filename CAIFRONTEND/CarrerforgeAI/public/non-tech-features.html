@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Non-technical career tools — CareerforgeAI">
+    <title>Non-Tech Tools — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/features.css">
+    <style>
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .features-grid .feature-card:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            max-width: 50%;
+            justify-self: center;
+        }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: #f0abfc;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        .feature-card .card-badge {
+            font-size: 0.7rem;
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 12px;
+            display: inline-block;
+        }
+        .feature-card .card-badge.new {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        /* Non-tech trending topics ticker */
+        .nontech-ticker-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(236, 72, 153, 0.2);
+            padding: 15px 0;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        .nontech-ticker-wrapper {
+            display: flex;
+            white-space: nowrap;
+            animation: tickerLoop 35s linear infinite;
+            width: max-content;
+        }
+        .nontech-ticker-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 40px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .nontech-ticker-dot {
+            width: 6px;
+            height: 6px;
+            background: #ec4899;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+        }
+        .nontech-ticker-container:hover .nontech-ticker-wrapper {
+            animation-play-state: paused;
+        }
+        .nontech-ticker-container:hover .nontech-ticker-item {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <a href="/" class="back-home-features">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Back to Home</span>
+    </a>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">📞</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">💬</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content features-content">
+        <div class="container">
+            <div class="header-section">
+                <div class="section-badge">🎨 Non-Technical Path</div>
+                <h1 class="title-small">Your <span class="accent">Career Tools</span></h1>
+                <p class="subtitle">AI-powered tools designed for management, design, marketing, HR, finance & more</p>
+            </div>
+
+            <div class="features-grid">
+                <a href="/career-explorer.html" class="glass-card feature-card">
+                    <div class="card-icon">🗺️</div>
+                    <h3>Career Explorer</h3>
+                    <p>Browse non-tech career paths with salaries, skills & growth potential.</p>
+                    <span class="card-badge new">NEW</span>
+                </a>
+
+                <a href="/expert-chat.html" class="glass-card feature-card">
+                    <div class="card-icon">💬</div>
+                    <h3>Expert Chat</h3>
+                    <p>Get career advice from an AI expert in non-tech fields.</p>
+                    <span class="card-badge new">NEW</span>
+                </a>
+
+                <a href="/resume-parser.html" class="glass-card feature-card">
+                    <div class="card-icon">📄</div>
+                    <h3>Resume Parser</h3>
+                    <p>Get instant AI feedback and score for your resume.</p>
+                </a>
+
+                <a href="/guidance.html" class="glass-card feature-card">
+                    <div class="card-icon">💡</div>
+                    <h3>Career Guidance</h3>
+                    <p>Expert career advice tailored to your goals.</p>
+                </a>
+
+                <a href="/soft-skills-quiz.html" class="glass-card feature-card">
+                    <div class="card-icon">📝</div>
+                    <h3>Soft Skills Quiz</h3>
+                    <p>Assess your communication, leadership & teamwork skills.</p>
+                    <span class="card-badge new">NEW</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Non-Tech Trending Topics Ticker -->
+    <div class="nontech-ticker-container">
+        <div class="nontech-ticker-wrapper">
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Product Management</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> UX/UI Design</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Digital Marketing</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Business Strategy</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Human Resources</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Financial Planning</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Content Strategy</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Leadership Skills</div>
+            <!-- Duplicate for seamless loop -->
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Product Management</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> UX/UI Design</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Digital Marketing</div>
+            <div class="nontech-ticker-item"><span class="nontech-ticker-dot"></span> Business Strategy</div>
+        </div>
+    </div>
+
+    <!-- VarGo Chatbot -->
+    <a href="/vargo.html" class="vargo-chatbot-link">
+        <div class="vargo-chatbot-container">
+            <div class="vargo-label">Talk to VarGo</div>
+            <button class="vargo-toggle" id="vargoToggle">
+                <img src="/img/vargo-avatar.png" alt="VarGo AI" class="vargo-avatar">
+                <div class="vargo-status"></div>
+            </button>
+        </div>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

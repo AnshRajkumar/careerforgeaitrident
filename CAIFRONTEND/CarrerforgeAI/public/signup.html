@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .content {
+            justify-content: center;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            margin-top: 30px;
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #818cf8;
+        }
+        .form-group input, .form-group select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .role-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            color: #cad4e0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .role-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+            color: white;
+        }
+        .btn-auth {
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-auth:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .auth-footer {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .auth-footer a {
+            color: #818cf8;
+            font-weight: 600;
+        }
+        .back-home {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cad4e0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="page-loaded">
+    <div class="bg-overlay"></div>
+    
+    <a href="/" class="back-home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Home
+    </a>
+
+    <main class="content">
+        <div class="auth-container">
+            <h1 class="title-small">Create <span class="accent">Account</span></h1>
+            <p class="subtitle">Join thousands of students on their career journey.</p>
+
+            <div class="auth-card fade-in">
+                <form id="signupForm" class="auth-form" onsubmit="event.preventDefault();">
+                    <div class="form-group">
+                        <label>Select Role</label>
+                        <div class="role-selector">
+                            <button type="button" class="role-btn active" data-role="student">Student</button>
+                            <button type="button" class="role-btn" data-role="mentor">Mentor</button>
+                            <button type="button" class="role-btn" data-role="admin">Admin</button>
+                        </div>
+                        <input type="hidden" id="selectedRole" value="student">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="name@example.com" required>
+                    </div>
+                    
+                    <!-- Role Specific Fields -->
+
+                    <div id="mentorFields" class="form-group" style="display: none;">
+                        <label for="expertise">Area of Expertise</label>
+                        <input type="text" id="expertise" placeholder="e.g. AI, Backend, Soft Skills">
+                        <label for="experience" style="margin-top: 10px;">Years of Experience</label>
+                        <input type="number" id="experience" placeholder="e.g. 5">
+                    </div>
+
+                    <div id="adminFields" class="form-group" style="display: none;">
+                        <label for="adminSecret">Admin Secret Passphrase</label>
+                        <input type="password" id="adminSecret" placeholder="Enter Registration Key">
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <div id="g_id_onload"
+                             data-client_id="198998709481-iudv2eqkpdap08mjv36oha9ucvfddv9u.apps.googleusercontent.com"
+                             data-context="signup"
+                             data-ux_mode="popup"
+                             data-callback="onGoogleSignUp"
+                             data-auto_prompt="false">
+                        </div>
+
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-shape="rectangular"
+                             data-theme="outline"
+                             data-text="signup_with"
+                             data-size="large"
+                             data-logo_alignment="left">
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="auth-footer">
+                    Already have an account? <a href="/login">Login</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Define the callback synchronously so Google finds it immediately -->
+    <script>
+        window.onGoogleSignUp = async (response) => {
+            if (window.executeGoogleSignUp) {
+                await window.executeGoogleSignUp(response);
+            } else {
+                console.error("Signup module not ready.");
+            }
+        };
+    </script>
+
+    <script src="/js/config.js"></script>
+    <!-- Google Identity Services Script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script type="module">
+        import { handleGoogleLogin } from '/js/auth.js?v=4';
+
+        // Role Selection Logic
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const roleInput = document.getElementById('selectedRole');
+        
+        // Field groups
+        const mentorFields = document.getElementById('mentorFields');
+        const adminFields = document.getElementById('adminFields');
+
+        function updateFields(role) {
+            mentorFields.style.display = 'none';
+            adminFields.style.display = 'none';
+            
+            const allInputs = [
+                document.getElementById('expertise'),
+                document.getElementById('experience'),
+                document.getElementById('adminSecret')
+            ];
+            allInputs.forEach(input => input.removeAttribute('required'));
+
+            if (role === 'mentor') {
+                mentorFields.style.display = 'flex';
+                document.getElementById('expertise').setAttribute('required', 'true');
+                document.getElementById('experience').setAttribute('required', 'true');
+            } else if (role === 'admin') {
+                adminFields.style.display = 'flex';
+                document.getElementById('adminSecret').setAttribute('required', 'true');
+            }
+        }
+
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                roleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                roleInput.value = btn.dataset.role;
+                updateFields(btn.dataset.role);
+            });
+        });
+
+        // Actual module-level logic injected into global execution function
+        window.executeGoogleSignUp = async (response) => {
+            const role = roleInput.value;
+            if (role === 'mentor' && !document.getElementById('mentorAccess').value) {
+                alert("Please enter Mentor Access Code");
+                return;
+            }
+            
+            await handleGoogleLogin(response, role); // auth.js reuses this for both conceptually
+        };
+    </script>
+</body>
+</html>

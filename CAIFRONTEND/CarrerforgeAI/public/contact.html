@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Developers — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            margin-top: 40px;
+        }
+        .contact-info {
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        .info-label {
+            color: #818cf8;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="page-loaded">
+    <div class="bg-overlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link active">
+                    <span class="link-icon">📞</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">💬</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <main class="content">
+        <div class="contact-container">
+            <h1 class="title-small">Contact <span class="accent">Support</span></h1>
+            <p class="subtitle">Our development team is here to help you.</p>
+
+            <div class="contact-card fade-in">
+                <div class="contact-info">
+                    <span class="info-label">📞 Phone</span>
+                    <span class="info-value">+917653831268</span>
+                </div>
+                <div class="contact-info">
+                    <span class="info-label">📧 Email</span>
+                    <span class="info-value">kakashimkm8@gmail.com</span>
+                </div>
+            </div>
+
+            <!-- Sidebar replaces redundant button -->
+        </div>
+    </main>
+    <script src="/js/main.js"></script>
+</body>
+</html>

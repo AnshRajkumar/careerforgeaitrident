@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chat with an AI career expert for non-tech fields — CareerforgeAI">
+    <title>Expert Chat — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .expert-chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 850px;
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(168, 85, 247, 0.1));
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .expert-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .chat-header-info h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+        .chat-header-info p {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin: 2px 0 0;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: fadeSlideIn 0.3s ease;
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.expert {
+            align-self: flex-start;
+            background: rgba(236, 72, 153, 0.08);
+            border: 1px solid rgba(236, 72, 153, 0.15);
+            color: #e2e8f0;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(0,0,0,0.25);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .chat-input-area input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 18px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+        .chat-input-area input:focus {
+            border-color: #ec4899;
+        }
+        .chat-input-area input::placeholder { color: #64748b; }
+        .btn-send {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .btn-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+        }
+        .back-link {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 18px;
+            border-radius: 12px;
+            color: #cad4e0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            z-index: 1001;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #ec4899;
+            color: white;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 14px 18px;
+            align-self: flex-start;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #ec4899;
+            border-radius: 50%;
+            animation: typingPulse 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingPulse {
+            0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1); }
+        }
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 25px 15px;
+        }
+        .chip {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #f0abfc;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .chip:hover {
+            background: rgba(236, 72, 153, 0.2);
+            border-color: rgba(236, 72, 153, 0.4);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <a href="/non-tech-features.html" class="back-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+    </a>
+
+    <main class="expert-chat-wrapper">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="expert-avatar">🎓</div>
+                <div class="chat-header-info">
+                    <h2>Career Expert</h2>
+                    <p>AI advisor for non-tech careers • Always online</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message expert">
+                    Hi there! 👋 I'm your AI Career Expert specializing in non-technical fields — product management, UX design, marketing, HR, finance, business strategy & more. Ask me anything about career paths, skills, salaries, or how to break into your dream role!
+                </div>
+            </div>
+
+            <div class="suggestion-chips" id="suggestionChips">
+                <div class="chip" onclick="sendSuggestion(this)">How to become a Product Manager?</div>
+                <div class="chip" onclick="sendSuggestion(this)">UX Design career path</div>
+                <div class="chip" onclick="sendSuggestion(this)">Marketing vs Sales career</div>
+                <div class="chip" onclick="sendSuggestion(this)">Best skills for HR</div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="expertInput" placeholder="Ask about any non-tech career...">
+                <button class="btn-send" id="expertSendBtn">Send</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script>
+        const chatInput = document.getElementById('expertInput');
+        const sendBtn = document.getElementById('expertSendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const suggestionChips = document.getElementById('suggestionChips');
+
+        function sendSuggestion(chip) {
+            chatInput.value = chip.textContent;
+            suggestionChips.style.display = 'none';
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // Hide suggestion chips after first message
+            suggestionChips.style.display = 'none';
+
+            // Append user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = text;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/expert_chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: text })
+                });
+                const data = await res.json();
+
+                typingDiv.remove();
+
+                const expertDiv = document.createElement('div');
+                expertDiv.className = 'message expert';
+                expertDiv.style.whiteSpace = 'pre-wrap';
+                expertDiv.textContent = data.response || 'No response received.';
+                chatMessages.appendChild(expertDiv);
+            } catch (err) {
+                typingDiv.remove();
+                const errDiv = document.createElement('div');
+                errDiv.className = 'message expert';
+                errDiv.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                errDiv.textContent = 'Failed to connect to expert server. Please try again.';
+                chatMessages.appendChild(errDiv);
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

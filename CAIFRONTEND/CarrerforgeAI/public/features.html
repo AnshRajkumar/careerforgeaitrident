@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/features.css">
+    <link rel="stylesheet" href="/css/career-rpg.css">
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <a href="/" class="back-home-features">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Back to Home</span>
+    </a>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">📞</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">💬</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content features-content">
+        <div class="container">
+            <!-- Sidebar replaces redundant back link -->
+            
+            <div class="header-section">
+                <h1 class="title-small">Explore AI <span class="accent">Career Tools</span></h1>
+                <p class="subtitle">Select a tool to boost your career growth</p>
+            </div>
+
+            <div class="features-grid">
+                <a href="/mentor-chat" class="glass-card feature-card">
+                    <div class="card-icon">👨‍🏫</div>
+                    <h3>Mentor Chat</h3>
+                    <p>Chat with verified mentors for career guidance.</p>
+                </a>
+
+                <a href="/interview.html" class="glass-card feature-card">
+                    <div class="card-icon">💬</div>
+                    <h3>Interview Prep</h3>
+                    <p>Practice interviews with our advanced AI trainer.</p>
+                </a>
+
+                <a href="/resume-parser.html" class="glass-card feature-card">
+                    <div class="card-icon">📄</div>
+                    <h3>Resume Parser</h3>
+                    <p>Get instant AI feedback and score for your resume.</p>
+                </a>
+
+                <a href="/guidance.html" class="glass-card feature-card">
+                    <div class="card-icon">💡</div>
+                    <h3>Career Guidance</h3>
+                    <p>Expert career advice tailored to your goals.</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Tech Topics Ticker -->
+    <a href="/hot-topics" id="techTicker" class="tech-ticker-container">
+        <div class="ticker-wrapper">
+            <div class="ticker-item"><span class="ticker-dot"></span> AI Machine Learning</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Web3 & Blockchain</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Cloud Computing</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Cybersecurity Trends</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Data Science Insights</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Quantum Computing</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Edge AI</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> DevOps Best Practices</div>
+            <!-- Duplicate for seamless loop -->
+            <div class="ticker-item"><span class="ticker-dot"></span> AI Machine Learning</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Web3 & Blockchain</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Cloud Computing</div>
+            <div class="ticker-item"><span class="ticker-dot"></span> Cybersecurity Trends</div>
+        </div>
+    </a>
+
+    <!-- VarGo Chatbot -->
+    <a href="/vargo.html" class="vargo-chatbot-link">
+        <div class="vargo-chatbot-container">
+            <div class="vargo-label">Talk to VarGo</div>
+            <button class="vargo-toggle" id="vargoToggle">
+                <img src="/img/vargo-avatar.png" alt="VarGo AI" class="vargo-avatar">
+                <div class="vargo-status"></div>
+            </button>
+        </div>
+    </a>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/career-rpg.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userType = urlParams.get('type');
+            const ticker = document.getElementById('techTicker');
+
+            if (userType === 'non-technical') {
+                if (ticker) ticker.style.display = 'none';
+                
+                // Add a small spacer at the bottom if ticker is hidden
+                document.body.style.paddingBottom = '40px';
+            }
+        });
+    </script>
+</body>
+</html>

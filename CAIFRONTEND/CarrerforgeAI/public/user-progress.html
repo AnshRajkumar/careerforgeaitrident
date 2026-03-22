@@ -1,0 +1,615 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Progress — CareerForgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #0a0a14; color: #e2e8f0; min-height: 100vh; }
+
+        .main-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 32px;
+        }
+
+        /* Header */
+        .dash-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .user-greeting h1 { font-size: 1.8rem; font-weight: 800; }
+        .user-greeting p { color: #64748b; margin-top: 4px; font-size: 0.9rem; }
+
+        .user-avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            border: 2px solid #6366f1; object-fit: cover;
+        }
+        .user-avatar-placeholder {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: 700; color: white;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 18px;
+            padding: 22px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(.4,0,.2,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            background: rgba(99,102,241,0.06);
+            border-color: rgba(99,102,241,0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(99,102,241,0.1);
+        }
+        .stat-card.expanded {
+            border-color: rgba(99,102,241,0.4);
+            background: rgba(99,102,241,0.08);
+        }
+
+        .stat-icon { font-size: 1.6rem; margin-bottom: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: #818cf8; }
+        .stat-label { font-size: 0.75rem; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Progress bar inside stat card */
+        .progress-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(.4,0,.2,1), margin-top 0.3s, opacity 0.3s;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .stat-card.expanded .progress-section {
+            max-height: 120px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s cubic-bezier(.4,0,.2,1);
+        }
+
+        .progress-hint {
+            font-size: 0.7rem;
+            color: #475569;
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        /* Profile card */
+        .profile-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 28px;
+        }
+        .profile-card h3 {
+            font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px;
+        }
+        .profile-avatar-lg {
+            width: 72px; height: 72px; border-radius: 50%;
+            border: 3px solid #6366f1; object-fit: cover; margin-bottom: 16px;
+        }
+        .profile-name { font-size: 1.2rem; font-weight: 700; }
+        .profile-email { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+        .profile-role {
+            display: inline-block; margin-top: 12px; padding: 4px 14px;
+            background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 20px; font-size: 0.8rem; color: #818cf8; font-weight: 600;
+        }
+        .profile-joined { font-size: 0.8rem; color: #475569; margin-top: 16px; }
+
+        /* Activity Feed */
+        .activity-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 28px;
+        }
+        .activity-card h3 {
+            font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px;
+        }
+
+        .activity-list { display: flex; flex-direction: column; gap: 14px; max-height: 360px; overflow-y: auto; }
+
+        .activity-item {
+            display: flex; gap: 16px; align-items: flex-start;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .activity-dot {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .activity-content { flex: 1; }
+        .activity-title { font-size: 0.9rem; font-weight: 500; color: #e2e8f0; }
+        .activity-detail { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+        .activity-time { font-size: 0.75rem; color: #475569; margin-top: 4px; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #475569; }
+        .empty-state .emoji { font-size: 2.5rem; margin-bottom: 12px; }
+
+        /* Loading shimmer */
+        .loading-shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%; animation: shimmer 1.5s infinite;
+            border-radius: 8px; height: 20px; margin-bottom: 10px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Back button */
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: #64748b; text-decoration: none; font-size: 0.85rem;
+            margin-bottom: 20px; transition: color 0.2s;
+        }
+        .back-btn:hover { color: #e2e8f0; }
+
+        /* Quick nav links */
+        .quick-nav {
+            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px;
+        }
+        .nav-chip {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.25s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-chip:hover {
+            background: rgba(99,102,241,0.1);
+            border-color: rgba(99,102,241,0.3);
+            color: #818cf8;
+            transform: translateY(-1px);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+            .main-content { padding: 24px 16px; }
+        }
+        @media (max-width: 520px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        /* RPG Card */
+        .rpg-stats-card {
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04));
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+        .rpg-stats-card h3 {
+            font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px;
+        }
+        .rpg-header-row {
+            display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .rpg-path-tag {
+            padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+        }
+        .rpg-path-tag.tech { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+        .rpg-path-tag.nontech { background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); }
+        .rpg-designation { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; }
+        .rpg-title-rank { font-size: 0.85rem; color: #a78bfa; font-weight: 600; }
+
+        .rpg-xp-section { margin-bottom: 20px; }
+        .rpg-xp-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 6px; }
+        .rpg-xp-track { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
+        .rpg-xp-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #6366f1, #a78bfa); transition: width 1s; }
+
+        .rpg-mini-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px;
+        }
+        .rpg-mini {
+            background: rgba(0,0,0,0.2); border-radius: 12px; padding: 14px; text-align: center;
+        }
+        .rpg-mini-val { font-size: 1.3rem; font-weight: 800; color: #818cf8; }
+        .rpg-mini-lbl { font-size: 0.7rem; color: #64748b; margin-top: 2px; text-transform: uppercase; }
+
+        .rpg-stat-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+        .rpg-bar-item { display: flex; align-items: center; gap: 10px; }
+        .rpg-bar-name { font-size: 0.75rem; color: #94a3b8; width: 36px; text-align: right; font-weight: 600; }
+        .rpg-bar-track { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 8px; overflow: hidden; }
+        .rpg-bar-fill { height: 100%; border-radius: 8px; transition: width 1s; }
+        .rpg-bar-val { font-size: 0.75rem; color: #e2e8f0; width: 28px; font-weight: 700; }
+
+        .rpg-empty { text-align: center; padding: 30px; color: #475569; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<div class="bg-overlay"></div>
+
+<main class="main-content">
+    <a href="/" class="back-btn">← Back to Home</a>
+
+    <!-- Header -->
+    <div class="dash-header">
+        <div class="user-greeting">
+            <h1 id="greetingText">Loading...</h1>
+            <p id="greetingDate"></p>
+        </div>
+        <div id="headerAvatar"></div>
+    </div>
+
+    <!-- Stats Grid (Clickable with progress bars) -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="loading-shimmer"></div><div class="loading-shimmer" style="width:60%"></div></div>
+        <div class="stat-card"><div class="loading-shimmer"></div><div class="loading-shimmer" style="width:60%"></div></div>
+        <div class="stat-card"><div class="loading-shimmer"></div><div class="loading-shimmer" style="width:60%"></div></div>
+        <div class="stat-card"><div class="loading-shimmer"></div><div class="loading-shimmer" style="width:60%"></div></div>
+        <div class="stat-card"><div class="loading-shimmer"></div><div class="loading-shimmer" style="width:60%"></div></div>
+    </div>
+
+    <!-- Quick Nav -->
+    <div class="quick-nav">
+        <a href="/vargo.html" class="nav-chip">🤖 VarGo Chat</a>
+        <a href="/resume-parser.html" class="nav-chip">📄 Resume Parser</a>
+        <a href="/interview.html" class="nav-chip">🎯 Interview Prep</a>
+        <a href="/career-rpg.html" class="nav-chip">⚔️ Career RPG</a>
+        <a href="/mentor-chat.html" class="nav-chip">💬 Mentor Chat</a>
+        <a href="/features.html" class="nav-chip">🛠️ All Tools</a>
+    </div>
+
+    <!-- Two Column -->
+    <div class="two-col">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <h3>👤 Profile</h3>
+            <div id="profileContent">
+                <div class="loading-shimmer" style="width:72px;height:72px;border-radius:50%;margin-bottom:16px;"></div>
+                <div class="loading-shimmer" style="width:140px;"></div>
+                <div class="loading-shimmer" style="width:200px;"></div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="activity-card">
+            <h3>⚡ Recent Activity</h3>
+            <div class="activity-list" id="activityList">
+                <div class="loading-shimmer"></div>
+                <div class="loading-shimmer"></div>
+                <div class="loading-shimmer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RPG Stats Section -->
+    <div class="rpg-stats-card">
+        <h3>⚔️ System V4 — Career RPG Progress</h3>
+        <div id="rpgStatsContent">
+            <div class="loading-shimmer"></div>
+            <div class="loading-shimmer" style="width:70%"></div>
+            <div class="loading-shimmer" style="width:50%"></div>
+        </div>
+    </div>
+</main>
+
+<script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+<script>
+    const API = API_BASE_URL;
+
+    const ACTIVITY_CONFIG = {
+        vargo_chat:     { icon: '🤖', color: 'rgba(99,102,241,0.15)', label: 'VarGo Chat' },
+        resume_upload:  { icon: '📄', color: 'rgba(16,185,129,0.15)', label: 'Resume Upload' },
+        interview:      { icon: '🎯', color: 'rgba(245,158,11,0.15)', label: 'Interview Practice' },
+        skill_check:    { icon: '🔍', color: 'rgba(139,92,246,0.15)', label: 'Skill Check' },
+        mentor_chat:    { icon: '💬', color: 'rgba(236,72,153,0.15)', label: 'Mentor Chat' },
+        career_rpg:     { icon: '⚔️', color: 'rgba(239,68,68,0.15)', label: 'Career RPG' },
+        default:        { icon: '⚡', color: 'rgba(100,116,139,0.15)', label: 'Activity' }
+    };
+
+    // Progress targets (goals) for each stat card
+    const STAT_GOALS = {
+        total:    { goal: 50,  barColor: 'linear-gradient(90deg, #6366f1, #a78bfa)', hint: 'Goal: 50 activities to unlock Pro status' },
+        vargo:    { goal: 20,  barColor: 'linear-gradient(90deg, #6366f1, #818cf8)', hint: 'Goal: 20 VarGo sessions for mastery' },
+        resume:   { goal: 5,   barColor: 'linear-gradient(90deg, #10b981, #34d399)', hint: 'Goal: 5 resumes for full profile' },
+        interview:{ goal: 10,  barColor: 'linear-gradient(90deg, #f59e0b, #fbbf24)', hint: 'Goal: 10 practice interviews' },
+        mentor:   { goal: 50,  barColor: 'linear-gradient(90deg, #ec4899, #f472b6)', hint: 'Goal: 50 mentor messages' },
+    };
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '';
+        try {
+            const d = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - d) / 1000);
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+            return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+        } catch { return timestamp; }
+    }
+
+    async function loadDashboard() {
+        const user = {
+            uid: localStorage.getItem('userId'),
+            name: localStorage.getItem('userName'),
+            email: localStorage.getItem('userEmail'),
+            picture: localStorage.getItem('userPicture'),
+            role: localStorage.getItem('userRole') || 'student'
+        };
+
+        if (!user.uid) { window.location.href = '/'; return; }
+
+        const hour = new Date().getHours();
+        const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+        document.getElementById('greetingText').textContent = `${greet}, ${user.name?.split(' ')[0] || 'there'} 👋`;
+        document.getElementById('greetingDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+        const avatarEl = document.getElementById('headerAvatar');
+        if (user.picture) {
+            avatarEl.innerHTML = `<img src="${user.picture}" class="user-avatar" onerror="this.parentElement.innerHTML='<div class=user-avatar-placeholder>${user.name?.[0]||'U'}</div>'" />`;
+        } else {
+            avatarEl.innerHTML = `<div class="user-avatar-placeholder">${user.name?.[0] || 'U'}</div>`;
+        }
+
+        try {
+            const res = await fetch(`${API}/api/user/progress/${user.uid}`);
+            const data = await res.json();
+            renderStats(data.stats);
+            renderProfile(user, data.profile);
+            renderActivity(data.activity);
+            
+            // V17: Fetch and render RPG data
+            const rpgRes = await fetch(`${API}/api/rpg/load/${user.uid}`);
+            const rpgData = await rpgRes.json();
+            renderRPGStats(rpgData);
+        } catch (e) {
+            renderStats({});
+            renderProfile(user, {});
+            renderActivity([]);
+            renderRPGStats({ state: null });
+        }
+    }
+
+    function renderRPGStats(data) {
+        const container = document.getElementById('rpgStatsContent');
+        if (!data || !data.state || !data.state.designation) {
+            container.innerHTML = `
+                <div class="rpg-empty">
+                    <p>⚔️ System V4 not yet awakened.</p>
+                    <a href="/" style="color: #818cf8; text-decoration: none; font-size: 0.8rem; margin-top: 10px; display: inline-block;">Go to Home to start your journey →</a>
+                </div>
+            `;
+            return;
+        }
+
+        const s = data.state;
+        const isTech = s.careerPath === 'tech';
+        const pathLabel = isTech ? 'TECHNICAL PATH' : 'NON-TECHNICAL PATH';
+        const pathClass = isTech ? 'tech' : 'nontech';
+        
+        // Exponential XP formula from career-rpg.js
+        const getMaxXP = (lvl) => Math.floor(100 * Math.pow(lvl, 1.5));
+        const maxXP = getMaxXP(s.level);
+        const xpPct = Math.min(100, Math.max(0, (s.xp / maxXP) * 100));
+
+        // Rank Title Logic
+        const levelTitles = { 1: "E-Rank", 5: "D-Rank", 10: "C-Rank", 20: "B-Rank", 30: "A-Rank", 50: "S-Rank", 100: "National Level" };
+        let currentTitle = "E-Rank Trainee";
+        Object.keys(levelTitles).map(Number).sort((a,b)=>a-b).forEach(l => {
+            if(s.level >= l) currentTitle = levelTitles[l];
+        });
+
+        container.innerHTML = `
+            <div class="rpg-header-row">
+                <div class="rpg-path-tag ${pathClass}">${pathLabel}</div>
+                <div class="rpg-designation">${s.designation}</div>
+                <div class="rpg-title-rank">${currentTitle}</div>
+            </div>
+
+            <div class="rpg-xp-section">
+                <div class="rpg-xp-label">
+                    <span>Level ${s.level}</span>
+                    <span>${s.xp} / ${maxXP} XP</span>
+                </div>
+                <div class="rpg-xp-track">
+                    <div class="rpg-xp-fill" style="width: ${xpPct}%"></div>
+                </div>
+            </div>
+
+            <div class="rpg-mini-stats">
+                <div class="rpg-mini">
+                    <div class="rpg-mini-val">${s.coins}</div>
+                    <div class="rpg-mini-lbl">Coins 🪙</div>
+                </div>
+                <div class="rpg-mini">
+                    <div class="rpg-mini-val">${s.honor}</div>
+                    <div class="rpg-mini-lbl">Honor 🎖️</div>
+                </div>
+                <div class="rpg-mini">
+                    <div class="rpg-mini-val">${s.streakDays}</div>
+                    <div class="rpg-mini-lbl">Streak 🔥</div>
+                </div>
+                <div class="rpg-mini">
+                    <div class="rpg-mini-val">${s.questsCompleted}</div>
+                    <div class="rpg-mini-lbl">Quests Done ✅</div>
+                </div>
+            </div>
+
+            <div class="rpg-stat-bars">
+                ${renderStatBar('INT', s.intelligence, '#6366f1')}
+                ${renderStatBar('CON', s.consistency, '#10b981')}
+                ${renderStatBar('FOC', s.focus, '#f59e0b')}
+                ${renderStatBar('COM', s.communication, '#ec4899')}
+                ${renderStatBar('AMB', s.ambition, '#ef4444')}
+                <div class="rpg-bar-item">
+                    <div class="rpg-bar-name">BOSS</div>
+                    <div class="rpg-bar-track">
+                        <div class="rpg-bar-fill" style="width: ${Math.max(0, (s.bossHP/s.bossMaxHP)*100)}%; background: #f87171;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderStatBar(label, val, color) {
+        const pct = Math.min(100, (val / 200) * 100);
+        return `
+            <div class="rpg-bar-item">
+                <div class="rpg-bar-name">${label}</div>
+                <div class="rpg-bar-track">
+                    <div class="rpg-bar-fill" style="width: ${pct}%; background: ${color};"></div>
+                </div>
+                <div class="rpg-bar-val">${val}</div>
+            </div>
+        `;
+    }
+
+    function buildStatCard(key, icon, value, label, goalConfig) {
+        const pct = Math.min(100, Math.round((value / goalConfig.goal) * 100));
+        return `
+            <div class="stat-card" onclick="toggleCard(this)">
+                <div class="stat-icon">${icon}</div>
+                <div class="stat-value">${value}</div>
+                <div class="stat-label">${label}</div>
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>Progress</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" data-width="${pct}" style="background: ${goalConfig.barColor};"></div>
+                    </div>
+                    <div class="progress-hint">${goalConfig.hint}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function toggleCard(card) {
+        const wasExpanded = card.classList.contains('expanded');
+        // Close all
+        document.querySelectorAll('.stat-card.expanded').forEach(c => c.classList.remove('expanded'));
+        // Toggle this
+        if (!wasExpanded) {
+            card.classList.add('expanded');
+            // Animate progress bar
+            setTimeout(() => {
+                const fill = card.querySelector('.progress-fill');
+                if (fill) fill.style.width = fill.dataset.width + '%';
+            }, 50);
+        }
+    }
+
+    function renderStats(stats) {
+        const s = stats || {};
+        document.getElementById('statsGrid').innerHTML =
+            buildStatCard('total', '⚡', s.total_activities || 0, 'Total Activities', STAT_GOALS.total) +
+            buildStatCard('vargo', '🤖', s.vargo_chats || 0, 'VarGo Chats', STAT_GOALS.vargo) +
+            buildStatCard('resume', '📄', s.resume_uploads || 0, 'Resumes Analyzed', STAT_GOALS.resume) +
+            buildStatCard('interview', '🎯', s.interviews || 0, 'Interviews Done', STAT_GOALS.interview) +
+            buildStatCard('mentor', '💬', s.mentor_chats || 0, 'Mentor Messages', STAT_GOALS.mentor);
+    }
+
+    function renderProfile(user, profile) {
+        const joined = profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { month:'long', year:'numeric' }) : 'Recently';
+        document.getElementById('profileContent').innerHTML = `
+            ${user.picture
+                ? `<img src="${user.picture}" class="profile-avatar-lg" onerror="this.style.display='none'" />`
+                : `<div class="user-avatar-placeholder" style="width:72px;height:72px;font-size:1.5rem;margin-bottom:16px;">${user.name?.[0]||'U'}</div>`
+            }
+            <div class="profile-name">${user.name || 'Anonymous'}</div>
+            <div class="profile-email">${user.email || ''}</div>
+            <div class="profile-role">${(user.role || 'student').charAt(0).toUpperCase() + (user.role||'student').slice(1)}</div>
+            <div class="profile-joined">📅 Member since ${joined}</div>
+        `;
+    }
+
+    function renderActivity(activities) {
+        const list = document.getElementById('activityList');
+        if (!activities || activities.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="emoji">🚀</div>
+                    <p>No activity yet. Start using CareerForgeAI tools<br>and your progress will appear here!</p>
+                </div>`;
+            return;
+        }
+        list.innerHTML = activities.map(a => {
+            const config = ACTIVITY_CONFIG[a.type] || ACTIVITY_CONFIG.default;
+            return `
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: ${config.color};">${config.icon}</div>
+                    <div class="activity-content">
+                        <div class="activity-title">${a.title || config.label}</div>
+                        ${a.detail ? `<div class="activity-detail">${a.detail}</div>` : ''}
+                        <div class="activity-time">${formatTime(a.timestamp)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = '/';
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>

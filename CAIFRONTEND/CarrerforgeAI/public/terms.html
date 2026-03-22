@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .legal-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 48px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            line-height: 1.9;
+            color: #cad4e0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(8px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        .section-title {
+            color: #ffffff;
+            margin-top: 36px;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title:first-child { margin-top: 0; }
+        /* Removed section-number CSS per user request */
+        .legal-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .title-small {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 800;
+            color: #ffffff;
+        }
+        .back-tools-btn {
+            position: fixed;
+            top: 30px;
+            left: 90px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .back-tools-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #6366f1;
+            color: white;
+        }
+    </style>
+</head>
+<body class="page-loaded">
+    <div class="bg-overlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">Menu</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <a href="/" class="sidebar-link">
+                    <span class="link-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Support</div>
+                <a href="/contact" class="sidebar-link">
+                    <span class="link-icon">📞</span>
+                    <span>Contact Developers</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Feedback</div>
+                <a href="/review" class="sidebar-link">
+                    <span class="link-icon">💬</span>
+                    <span>Review System</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">Help Center</div>
+                <a href="/terms" class="sidebar-link active">
+                    <span>Terms & Conditions</span>
+                </a>
+                <a href="/release-notes" class="sidebar-link">
+                    <span>Release Notes</span>
+                </a>
+                <a href="/pricing.html" class="sidebar-link">
+                    <span>Pricing & Plans</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="legal-container">
+            <div class="page-title">
+                <h1 class="title-small">Terms & <span class="accent">Conditions</span></h1>
+            </div>
+            <div class="legal-card">
+                <div class="section-title">Introduction</div>
+                <p>Welcome to CareerforgeAI. By using our services, you agree to the following terms and conditions.</p>
+                
+                <div class="section-title">Use of Service</div>
+                <p>Our platform provides AI-generated career roadmaps and resources. While we strive for accuracy, the results are for guidance purposes only.</p>
+
+                <div class="section-title">Data Privacy</div>
+                <p>Your privacy is important to us. We process your data in accordance with our Privacy Policy to provide and improve our services.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

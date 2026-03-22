@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard — CareerforgeAI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .mentor-wrapper {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%; max-width: 1000px; margin: 0 auto;
+            min-height: 100vh; padding: 40px 20px; position: relative;
+        }
+        .back-link {
+            position: absolute; top: 40px; left: 40px;
+            display: inline-flex; align-items: center; gap: 8px;
+            color: #94a3b8; transition: color 0.3s; z-index: 10;
+        }
+        .back-link:hover { color: white; }
+        .glass-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; padding: 40px; backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); width: 100%; max-width: 650px;
+            text-align: left; margin-top: 30px;
+        }
+        .form-label {
+            color: #e2e8f0; font-weight: 500; display: block; margin-bottom: 8px;
+        }
+        .form-input, .form-select {
+            width: 100%; padding: 14px 18px; font-size: 1rem;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: white; outline: none;
+            transition: border-color 0.3s; margin-bottom: 24px;
+        }
+        .form-input:focus, .form-select:focus { border-color: #6366f1; }
+        .form-select option { background: #1e1b4b; color: white; }
+        .btn-primary {
+            width: 100%; padding: 16px; font-size: 1.1rem; font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none; border-radius: 12px; color: white; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.6);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Test UI */
+        .test-container { width: 100%; max-width: 800px; margin-top: 30px; }
+        .test-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
+        }
+        .camera-feed {
+            width: 180px; height: 135px; border-radius: 12px; overflow: hidden;
+            border: 2px solid #6366f1; background: #000; flex-shrink: 0;
+        }
+        .camera-feed video { width: 100%; height: 100%; object-fit: cover; }
+        .test-info { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .test-badge {
+            padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+        }
+        .badge-live { background: rgba(239,68,68,0.2); color: #f87171; }
+        .badge-progress { background: rgba(99,102,241,0.2); color: #818cf8; }
+        .progress-bar {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; margin-bottom: 20px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 3px; transition: width 0.4s ease;
+        }
+        .question-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 30px; margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.1rem; color: #e2e8f0; font-weight: 600;
+            margin-bottom: 20px; line-height: 1.5;
+        }
+        .option-btn {
+            display: block; width: 100%; text-align: left;
+            padding: 14px 20px; margin-bottom: 10px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: #cbd5e1; font-size: 0.95rem; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3);
+        }
+        .option-btn.selected {
+            background: rgba(99,102,241,0.2); border-color: #6366f1; color: white;
+        }
+        .nav-buttons { display: flex; gap: 15px; margin-top: 10px; }
+        .btn-nav {
+            padding: 12px 30px; border-radius: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; border: none; font-size: 0.95rem;
+        }
+        .btn-next { background: #6366f1; color: white; }
+        .btn-next:hover { background: #4f46e5; }
+        .btn-prev { background: rgba(255,255,255,0.08); color: #cbd5e1; }
+        .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+
+        /* Warning overlay */
+        .cheat-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(239,68,68,0.95); z-index: 9999;
+            justify-content: center; align-items: center; flex-direction: column; gap: 20px;
+        }
+        .cheat-warning h1 { font-size: 2.5rem; color: white; }
+        .cheat-warning p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 500px; text-align: center; }
+
+        /* Terminated overlay */
+        .cheat-terminated {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.97); z-index: 99999;
+            justify-content: center; align-items: center; flex-direction: column; gap: 20px;
+        }
+        .cheat-terminated h1 { font-size: 2.5rem; color: #ef4444; }
+        .cheat-terminated p { color: rgba(255,255,255,0.7); font-size: 1rem; max-width: 500px; text-align: center; line-height: 1.6; }
+
+        /* Anti-cheat: no text selection during test */
+        .no-select { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+
+        .violation-log {
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 12px; padding: 15px; margin-top: 20px; text-align: left;
+        }
+        .violation-item {
+            padding: 6px 0; font-size: 0.85rem; color: #f87171;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .violation-item:last-child { border-bottom: none; }
+
+        /* Results */
+        .result-card {
+            text-align: center; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
+            padding: 50px 40px; max-width: 650px; width: 100%; margin-top: 30px;
+        }
+        .score-big {
+            font-size: 5rem; font-weight: 800; margin: 10px 0;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .score-big.pass { background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; }
+        .score-big.fail { background: linear-gradient(135deg, #ef4444, #f87171); -webkit-background-clip: text; }
+        .result-badge {
+            display: inline-block; padding: 10px 30px; border-radius: 30px;
+            font-size: 1.1rem; font-weight: 700; margin-top: 15px;
+        }
+        .badge-pass { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-fail { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .details-list { text-align: left; margin-top: 30px; }
+        .detail-item {
+            padding: 12px 16px; border-radius: 10px; margin-bottom: 8px;
+            font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .detail-correct { background: rgba(16,185,129,0.1); color: #34d399; }
+        .detail-wrong { background: rgba(239,68,68,0.1); color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <a href="/" class="back-link"><span>←</span> Home</a>
+
+    <!-- Cheat Warning Overlay -->
+    <div class="cheat-warning" id="cheatWarning">
+        <h1>⚠️ Warning!</h1>
+        <p id="warningMessage">Suspicious activity detected. This has been recorded.</p>
+        <p id="warningCount" style="font-size: 2rem; font-weight: 800; color: white;"></p>
+        <button class="btn-primary" style="width: auto; padding: 14px 40px;" onclick="dismissWarning()">Return to Test</button>
+    </div>
+
+    <!-- Test Terminated Overlay -->
+    <div class="cheat-terminated" id="cheatTerminated">
+        <h1>🚫 TEST SUSPENDED</h1>
+        <p>Your test has been automatically terminated due to multiple cheating violations detected by our AI proctoring system.</p>
+        <p id="terminationReason" style="color: #f87171; font-weight: 600;"></p>
+        <div id="violationSummary" style="margin-top: 20px; text-align: left; max-width: 450px;"></div>
+        <button class="btn-primary" style="width: auto; padding: 14px 40px; margin-top: 20px; background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="location.reload()">Close</button>
+    </div>
+
+    <main class="mentor-wrapper">
+        <h1 class="title-small">Mentor <span class="accent">Dashboard</span></h1>
+
+        <!-- STAGE 1: Preferences -->
+        <div id="stage1" class="glass-card">
+            <h2 style="color: #e2e8f0; margin-bottom: 5px;">Welcome, Mentor</h2>
+            <p style="color: #94a3b8; margin-bottom: 30px; font-size: 0.9rem;">Set your preferences, then take the qualification test to become a verified mentor.</p>
+
+            <label class="form-label">Area of Expertise*</label>
+            <input type="text" class="form-input" id="expertiseInput" placeholder="e.g. Machine Learning, React, Cybersecurity">
+
+            <label class="form-label">Years of Experience</label>
+            <select class="form-select" id="experienceSelect">
+                <option value="1-3">1–3 years</option>
+                <option value="3-5">3–5 years</option>
+                <option value="5-10">5–10 years</option>
+                <option value="10+">10+ years</option>
+            </select>
+
+            <div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <p style="color: #818cf8; font-weight: 600; margin-bottom: 6px;">📋 Qualification Requirements</p>
+                <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.5;">
+                    • 20 AI-generated expert-level questions<br>
+                    • Camera access required for AI proctoring<br>
+                    • Minimum <strong style="color: #10b981;">95% score</strong> required to qualify<br>
+                    • <strong style="color: #f87171;">Anti-cheat AI active</strong> — copying, tab switching, or suspicious activity will terminate the test<br>
+                    • Fullscreen mode enforced during test
+                </p>
+            </div>
+
+            <button class="btn-primary" id="startTestBtn">Start Qualification Test</button>
+        </div>
+
+        <!-- STAGE 2: Test -->
+        <div id="stage2" class="test-container" style="display: none;">
+            <div class="test-header">
+                <div class="test-info">
+                    <span class="test-badge badge-live" id="liveBadge">🔴 LIVE PROCTORED</span>
+                    <span class="test-badge badge-progress" id="qProgress">Q 1 / 20</span>
+                    <span class="test-badge" id="tabWarnings" style="background: rgba(255,255,255,0.05); color: #94a3b8;">Tab switches: 0</span>
+                </div>
+                <div class="camera-feed" id="cameraFeed">
+                    <video id="cameraVideo" autoplay muted playsinline></video>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-bar-fill" id="progressFill" style="width: 5%;"></div></div>
+
+            <div id="questionArea"></div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav btn-prev" id="prevBtn" style="display: none;">← Previous</button>
+                <button class="btn-nav btn-next" id="nextBtn">Next →</button>
+                <button class="btn-nav btn-submit" id="submitBtn" style="display: none;">Submit Test ✓</button>
+            </div>
+        </div>
+
+        <!-- STAGE 3: Results -->
+        <div id="stage3" style="display: none; width: 100%; display: none; flex-direction: column; align-items: center;">
+            <div class="result-card" id="resultCard"></div>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>`n    <script src="/js/main.js"></script>
+    <script>
+        let questions = [];
+        let answers = {};
+        let currentQ = 0;
+        let cameraStream = null;
+        let testActive = false;
+
+        // ==============================
+        // ANTI-CHEAT ENGINE
+        // ==============================
+        const MAX_TAB_SWITCHES = 3;
+        const MAX_TOTAL_VIOLATIONS = 5;
+
+        let violations = [];
+        let tabSwitchCount = 0;
+        let copyAttempts = 0;
+        let rightClickAttempts = 0;
+        let windowBlurCount = 0;
+        let devToolsDetected = false;
+
+        function logViolation(type, message) {
+            const time = new Date().toLocaleTimeString();
+            violations.push({ type, message, time });
+            console.warn(`[ANTI-CHEAT] ${type}: ${message} at ${time}`);
+            updateViolationBadge();
+
+            // Check if total violations exceed limit
+            if (violations.length >= MAX_TOTAL_VIOLATIONS) {
+                terminateTest(`Too many violations detected (${violations.length} total). Test auto-terminated.`);
+            }
+        }
+
+        function updateViolationBadge() {
+            tabWarnings.textContent = `Violations: ${violations.length}`;
+            if (violations.length > 0) {
+                tabWarnings.style.background = 'rgba(239,68,68,0.2)';
+                tabWarnings.style.color = '#f87171';
+            }
+        }
+
+        function showWarning(msg, count) {
+            document.getElementById('warningMessage').textContent = msg;
+            document.getElementById('warningCount').textContent = count ? `${count} / ${MAX_TAB_SWITCHES} warnings` : '';
+            cheatWarning.style.display = 'flex';
+        }
+
+        function terminateTest(reason) {
+            if (!testActive) return;
+            testActive = false;
+
+            // Cleanup
+            removeAllAntiCheatListeners();
+            if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+            try { document.exitFullscreen(); } catch(e) {}
+
+            // Show termination screen
+            document.getElementById('terminationReason').textContent = reason;
+            let vhtml = '<div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">Violation Log:</div>';
+            violations.forEach(v => {
+                vhtml += `<div style="color: #f87171; font-size: 0.8rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">⚠ [${v.time}] ${v.type}: ${v.message}</div>`;
+            });
+            document.getElementById('violationSummary').innerHTML = vhtml;
+            document.getElementById('cheatTerminated').style.display = 'flex';
+            cheatWarning.style.display = 'none';
+        }
+
+        // 1. TAB SWITCH DETECTION
+        function handleTabSwitch() {
+            if (!testActive) return;
+            if (document.hidden) {
+                tabSwitchCount++;
+                logViolation('TAB_SWITCH', `Switched away from test tab (${tabSwitchCount}/${MAX_TAB_SWITCHES})`);
+                if (tabSwitchCount >= MAX_TAB_SWITCHES) {
+                    terminateTest(`Test terminated: You switched tabs ${tabSwitchCount} times. Maximum allowed: ${MAX_TAB_SWITCHES}.`);
+                } else {
+                    showWarning(`You switched tabs! This is strike ${tabSwitchCount} of ${MAX_TAB_SWITCHES}. One more and your test will be TERMINATED.`, tabSwitchCount);
+                }
+            }
+        }
+
+        // 2. COPY / CUT / PASTE / SELECT-ALL BLOCKING
+        function handleKeyBlock(e) {
+            if (!testActive) return;
+            if (e.ctrlKey || e.metaKey) {
+                const blocked = ['c','v','x','a','p','s','u'];
+                if (blocked.includes(e.key.toLowerCase())) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyAttempts++;
+                    const action = {c:'Copy',v:'Paste',x:'Cut',a:'Select All',p:'Print',s:'Save',u:'View Source'}[e.key.toLowerCase()];
+                    logViolation('COPY_ATTEMPT', `Attempted to ${action} (blocked)`);
+                    showWarning(`${action} is disabled during the test. This violation has been recorded.`);
+                    return false;
+                }
+            }
+            // Block Print Screen
+            if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                e.preventDefault();
+                logViolation('SCREENSHOT', 'Attempted to take a screenshot (blocked)');
+                showWarning('Screenshots are not allowed during the test.');
+                return false;
+            }
+            // Block F12 (DevTools)
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                logViolation('DEVTOOLS', 'Attempted to open Developer Tools (blocked)');
+                showWarning('Developer Tools are not allowed during the test.');
+                return false;
+            }
+        }
+
+        // 3. RIGHT-CLICK BLOCKING
+        function handleRightClick(e) {
+            if (!testActive) return;
+            e.preventDefault();
+            rightClickAttempts++;
+            logViolation('RIGHT_CLICK', `Right-click context menu blocked (attempt ${rightClickAttempts})`);
+            showWarning('Right-click is disabled during the test. This has been recorded.');
+            return false;
+        }
+
+        // 4. WINDOW BLUR DETECTION
+        function handleWindowBlur() {
+            if (!testActive) return;
+            windowBlurCount++;
+            logViolation('WINDOW_BLUR', `Browser window lost focus (${windowBlurCount} times)`);
+        }
+
+        // 5. DEVTOOLS DETECTION (size-based)
+        let devToolsChecker = null;
+        function startDevToolsCheck() {
+            devToolsChecker = setInterval(() => {
+                if (!testActive) return;
+                const widthThreshold = window.outerWidth - window.innerWidth > 160;
+                const heightThreshold = window.outerHeight - window.innerHeight > 160;
+                if (widthThreshold || heightThreshold) {
+                    if (!devToolsDetected) {
+                        devToolsDetected = true;
+                        logViolation('DEVTOOLS_OPEN', 'Developer Tools detected open');
+                        terminateTest('Test terminated: Developer Tools were detected. This is a critical violation.');
+                    }
+                }
+            }, 1000);
+        }
+
+        // 6. COPY EVENT ON DOCUMENT
+        function handleCopyEvent(e) {
+            if (!testActive) return;
+            e.preventDefault();
+            logViolation('COPY_EVENT', 'Attempted to copy content from the test');
+            showWarning('Copying test content is strictly prohibited.');
+        }
+
+        function enableAllAntiCheat() {
+            document.addEventListener('visibilitychange', handleTabSwitch);
+            document.addEventListener('keydown', handleKeyBlock, true);
+            document.addEventListener('contextmenu', handleRightClick);
+            window.addEventListener('blur', handleWindowBlur);
+            document.addEventListener('copy', handleCopyEvent);
+            document.addEventListener('cut', handleCopyEvent);
+            document.body.classList.add('no-select');
+            startDevToolsCheck();
+
+            // Request fullscreen
+            try {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } catch(e) {}
+        }
+
+        function removeAllAntiCheatListeners() {
+            document.removeEventListener('visibilitychange', handleTabSwitch);
+            document.removeEventListener('keydown', handleKeyBlock, true);
+            document.removeEventListener('contextmenu', handleRightClick);
+            window.removeEventListener('blur', handleWindowBlur);
+            document.removeEventListener('copy', handleCopyEvent);
+            document.removeEventListener('cut', handleCopyEvent);
+            document.body.classList.remove('no-select');
+            if (devToolsChecker) clearInterval(devToolsChecker);
+        }
+
+        // ==============================
+        // MAIN UI LOGIC
+        // ==============================
+        const stage1 = document.getElementById('stage1');
+        const stage2 = document.getElementById('stage2');
+        const stage3 = document.getElementById('stage3');
+        const startTestBtn = document.getElementById('startTestBtn');
+        const questionArea = document.getElementById('questionArea');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressFill = document.getElementById('progressFill');
+        const qProgress = document.getElementById('qProgress');
+        const tabWarnings = document.getElementById('tabWarnings');
+        const cheatWarning = document.getElementById('cheatWarning');
+
+        // ---- STAGE 1: Start Test ----
+        startTestBtn.addEventListener('click', async () => {
+            const expertise = document.getElementById('expertiseInput').value.trim();
+            if (!expertise) { alert('Please enter your area of expertise.'); return; }
+
+            startTestBtn.textContent = 'Generating AI Questions...';
+            startTestBtn.disabled = true;
+
+            try {
+                const res = await fetch('${API_BASE_URL}/mentor_generate_test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ expertise: expertise, num_questions: 20 })
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    startTestBtn.textContent = 'Start Qualification Test';
+                    startTestBtn.disabled = false;
+                    return;
+                }
+
+                questions = data.questions;
+
+                // Request camera
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    document.getElementById('cameraVideo').srcObject = cameraStream;
+                } catch (camErr) {
+                    alert('Camera access is required for the proctored test. Please allow camera permissions.');
+                    startTestBtn.textContent = 'Start Qualification Test';
+                    startTestBtn.disabled = false;
+                    return;
+                }
+
+                // Activate anti-cheat engine
+                testActive = true;
+                enableAllAntiCheat();
+
+                // Switch to test view
+                stage1.style.display = 'none';
+                stage2.style.display = 'block';
+                renderQuestion();
+            } catch (e) {
+                alert('Error connecting to server.');
+                startTestBtn.textContent = 'Start Qualification Test';
+                startTestBtn.disabled = false;
+            }
+        });
+
+        function dismissWarning() {
+            cheatWarning.style.display = 'none';
+        }
+
+        // ---- Render Question ----
+        function renderQuestion() {
+            const q = questions[currentQ];
+            if (!q) return;
+
+            qProgress.textContent = `Q ${currentQ + 1} / ${questions.length}`;
+            progressFill.style.width = `${((currentQ + 1) / questions.length) * 100}%`;
+
+            let html = `<div class="question-card no-select">
+                <div class="question-text">${currentQ + 1}. ${q.question}</div>`;
+
+            for (const [key, val] of Object.entries(q.options)) {
+                const selected = answers[String(q.id)] === key ? 'selected' : '';
+                html += `<button class="option-btn ${selected}" onclick="selectOption('${q.id}', '${key}', this)">
+                    <strong>${key}.</strong> ${val}
+                </button>`;
+            }
+
+            html += `</div>`;
+            questionArea.innerHTML = html;
+
+            prevBtn.style.display = currentQ > 0 ? 'inline-block' : 'none';
+            if (currentQ === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function selectOption(qId, optionKey, el) {
+            answers[String(qId)] = optionKey;
+            questionArea.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        prevBtn.addEventListener('click', () => { if (currentQ > 0) { currentQ--; renderQuestion(); } });
+        nextBtn.addEventListener('click', () => { if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); } });
+
+        // ---- Submit Test ----
+        submitBtn.addEventListener('click', async () => {
+            const answered = Object.keys(answers).length;
+            if (answered < questions.length) {
+                const proceed = confirm(`You've answered ${answered}/${questions.length} questions. Unanswered = wrong. Continue?`);
+                if (!proceed) return;
+            }
+
+            submitBtn.textContent = 'Evaluating...';
+            submitBtn.disabled = true;
+            testActive = false;
+            removeAllAntiCheatListeners();
+            if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+            try { document.exitFullscreen(); } catch(e) {}
+
+            try {
+                const res = await fetch('${API_BASE_URL}/mentor_evaluate_test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ questions: questions, answers: answers })
+                });
+                const result = await res.json();
+                showResults(result);
+            } catch (e) {
+                alert('Error submitting test.');
+                submitBtn.textContent = 'Submit Test ✓';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // ---- Show Results ----
+        function showResults(result) {
+            stage2.style.display = 'none';
+            stage3.style.display = 'flex';
+
+            const scoreClass = result.passed ? 'pass' : 'fail';
+            const badgeClass = result.passed ? 'badge-pass' : 'badge-fail';
+            const badgeText = result.passed ? '✅ Verified Mentor' : '❌ Not Qualified';
+            const badgeMsg = result.passed
+                ? 'Congratulations! You are now a verified mentor on CareerForge AI.'
+                : 'You need at least 95% to qualify. You can retake the test.';
+
+            let detailsHtml = '';
+            result.details.forEach(d => {
+                const cls = d.is_correct ? 'detail-correct' : 'detail-wrong';
+                const icon = d.is_correct ? '✓' : '✗';
+                detailsHtml += `<div class="detail-item ${cls}">
+                    <span style="flex: 1; color: #e2e8f0;">Q${d.id}: ${d.question.substring(0, 60)}...</span>
+                    <span style="font-weight: 700;">${icon} ${d.your_answer || '—'} / ${d.correct_answer}</span>
+                </div>`;
+            });
+
+            let violationHtml = '';
+            if (violations.length > 0) {
+                violationHtml = `<div class="violation-log"><p style="color: #f87171; font-weight: 600; margin-bottom: 10px;">⚠️ ${violations.length} violation(s) detected during the test:</p>`;
+                violations.forEach(v => {
+                    violationHtml += `<div class="violation-item">[${v.time}] ${v.type}: ${v.message}</div>`;
+                });
+                violationHtml += '</div>';
+            }
+
+            document.getElementById('resultCard').innerHTML = `
+                <h2 style="color: #94a3b8; font-size: 1rem; font-weight: 500;">YOUR SCORE</h2>
+                <div class="score-big ${scoreClass}">${result.percentage}%</div>
+                <p style="color: #94a3b8;">${result.score} out of ${result.total} correct</p>
+                <div class="result-badge ${badgeClass}">${badgeText}</div>
+                <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">${badgeMsg}</p>
+                ${violationHtml}
+                <div class="details-list">${detailsHtml}</div>
+                ${!result.passed 
+                    ? '<button class="btn-primary" style="margin-top: 30px;" onclick="location.reload()">Retake Test</button>' 
+                    : '<button class="btn-primary" style="margin-top: 30px; background: linear-gradient(135deg, #10b981, #059669);" onclick="window.location.href=\'/mentor-hub\'">Go to Mentor Hub</button>'}
+            `;
+        }
+    </script>
+</body>
+</html>
