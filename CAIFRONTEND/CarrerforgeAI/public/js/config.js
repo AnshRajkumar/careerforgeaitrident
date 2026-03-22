@@ -5,9 +5,9 @@
 
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:8000'
-    : '';  // Empty string = same origin (use reverse proxy in production)
+    : 'https://careerforgeaitrident.onrender.com';
 
 // WebSocket base for video calls
 const WS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'ws://127.0.0.1:8000'
-    : `wss://${window.location.host}`;
+    : 'wss://careerforgeaitrident.onrender.com';
