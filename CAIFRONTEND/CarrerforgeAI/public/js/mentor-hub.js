@@ -124,7 +124,7 @@ async function sendMessage() {
     chatHistoryEl.scrollTo(0, chatHistoryEl.scrollHeight);
 
     try {
-        await fetch('${API_BASE_URL}/api/mentorhub/chat/messages', {
+        await fetch(`${API_BASE_URL}/api/mentorhub/chat/messages`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

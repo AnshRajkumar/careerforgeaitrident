@@ -451,7 +451,7 @@
             startTestBtn.disabled = true;
 
             try {
-                const res = await fetch('${API_BASE_URL}/mentor_generate_test', {
+                const res = await fetch(`${API_BASE_URL}/mentor_generate_test`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ expertise: expertise, num_questions: 20 })
@@ -553,7 +553,7 @@
             try { document.exitFullscreen(); } catch(e) {}
 
             try {
-                const res = await fetch('${API_BASE_URL}/mentor_evaluate_test', {
+                const res = await fetch(`${API_BASE_URL}/mentor_evaluate_test`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ questions: questions, answers: answers })

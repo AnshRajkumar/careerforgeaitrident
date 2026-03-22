@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Guidance — CareerforgeAI</title>
+    <title>AI Guidance ï¿½ CareerforgeAI</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .placeholder-content {
@@ -157,7 +157,7 @@
             }
 
             try {
-                const res = await fetch('${API_BASE_URL}/start_guidance', {
+                const res = await fetch(`${API_BASE_URL}/start_guidance`, {
                     method: 'POST',
                     body: formData
                 });
@@ -175,7 +175,7 @@
                     const loadingElement = chatMessages.lastChild;
 
                     try {
-                        const chatRes = await fetch('${API_BASE_URL}/vargo_chat', {
+                        const chatRes = await fetch(`${API_BASE_URL}/vargo_chat`, {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({ query: initialPrompt })
@@ -205,7 +205,7 @@
             const loadingElement = chatMessages.lastChild;
             
             try {
-                const res = await fetch('${API_BASE_URL}/vargo_chat', {
+                const res = await fetch(`${API_BASE_URL}/vargo_chat`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ query: text })

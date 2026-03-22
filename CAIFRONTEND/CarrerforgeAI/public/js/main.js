@@ -5,7 +5,7 @@ window.logActivity = async function(type, title, detail = '') {
     const uid = localStorage.getItem('userId');
     if (!uid) return;
     try {
-        await fetch('${API_BASE_URL}/api/user/activity', {
+        await fetch(`${API_BASE_URL}/api/user/activity`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ uid, type, title, detail })

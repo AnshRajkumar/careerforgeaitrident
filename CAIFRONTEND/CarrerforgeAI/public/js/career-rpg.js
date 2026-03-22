@@ -503,7 +503,7 @@ Allowed stats: intelligence, ambition, consistency, focus, communication.`;
         let qBank = [];
 
         try {
-            const response = await fetch('${API_BASE_URL}/vargo_chat', {
+            const response = await fetch(`${API_BASE_URL}/vargo_chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: prompt })
@@ -732,7 +732,7 @@ Here is their submitted proof of work:
 Did the user satisfactorily complete the task described? Do their actions/proof align with what was requested?
 Respond ONLY with 'YES' or 'NO', followed by a single sentence explaining your judgment. Remember, if they claim they did something but provide no proof or a nonsense answer, say NO.`;
 
-        const response = await fetch('${API_BASE_URL}/vargo_chat', {
+        const response = await fetch(`${API_BASE_URL}/vargo_chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: prompt })
