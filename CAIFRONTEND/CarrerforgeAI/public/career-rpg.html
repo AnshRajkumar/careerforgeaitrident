@@ -47,6 +47,13 @@
         <p>INITIALIZING SYSTEM V4...</p>
     </div>
 
+    <script>
+        // System V4 Premium Enforcement Gate
+        if (localStorage.getItem('is_premium') !== 'true') {
+            alert("🔒 System V4 Access Denied.\n\nThis advanced feature is exclusive to CareerForgeAI Express members. Redirecting you to upgrade...");
+            window.location.href = '/pricing.html';
+        }
+    </script>
     <script src="/js/main.js"></script>
     <script src="/js/career-rpg.js"></script>
     <script>

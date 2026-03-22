@@ -459,92 +459,106 @@
         </div>
     </main>
 
-    <!-- Payment Modal -->
+    <!-- Modern Razorpay Success Modal -->
     <div class="payment-modal" id="paymentModal">
-        <div class="payment-card">
-            <button class="payment-close" onclick="closePayment()">✕</button>
-            <div class="payment-title">Checkout</div>
-            <div class="payment-subtitle">Express Plan — ₹89.00 / month</div>
-            
-            <div class="payment-form">
-                <div class="form-group">
-                    <label>Card Number</label>
-                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" id="cc-num">
-                </div>
-                <div class="split-row">
-                    <div class="form-group">
-                        <label>Expiry Date</label>
-                        <input type="text" placeholder="MM/YY" maxlength="5">
-                    </div>
-                    <div class="form-group">
-                        <label>CVV</label>
-                        <input type="password" placeholder="123" maxlength="3">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Cardholder Name</label>
-                    <input type="text" placeholder="John Doe">
-                </div>
-                
-                <button class="payment-btn" id="payBtn" onclick="processPayment()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    Pay ₹89.00
-                </button>
+        <div class="payment-card" style="text-align: center; padding: 50px;">
+            <div class="success-icon" style="margin: 0 auto 20px auto; transform: scale(1);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-
-            <!-- Success Overlay -->
-            <div class="success-overlay" id="successOverlay">
-                <div class="success-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <div class="payment-title">Payment Successful!</div>
-                <div class="payment-subtitle" style="margin-bottom: 0px; margin-top: 10px;">Welcome to Express.</div>
-                <button class="btn-pricing btn-outline" style="margin-top: 25px; width: 80%; padding: 10px;" onclick="closePayment()">Return to Dashboard</button>
-            </div>
+            <div class="payment-title">Payment Successful!</div>
+            <div class="payment-subtitle" style="margin-bottom: 0px; margin-top: 10px;">Welcome to Express. You now have unlimited AI tools.</div>
+            <button class="btn-pricing btn-outline" style="margin-top: 25px; width: 80%; padding: 10px;" onclick="closePayment()">Return to Dashboard</button>
         </div>
     </div>
 
-    <!-- CC Input Formatting Script -->
+    <!-- Razorpay SDK and Integration Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/js/config.js"></script>
     <script>
-        const ccInput = document.getElementById('cc-num');
-        ccInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, "");
-            let formattedValue = "";
-            for (let i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) formattedValue += " ";
-                formattedValue += value[i];
-            }
-            e.target.value = formattedValue;
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is already premium on load
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/user/status`);
+                const data = await res.json();
+                if (data.is_premium) {
+                    const btn = document.querySelector('.btn-primary');
+                    btn.innerHTML = "Current Plan";
+                    btn.disabled = true;
+                    btn.classList.replace('btn-primary', 'btn-outline');
+                    localStorage.setItem('is_premium', 'true');
+                }
+            } catch (e) { console.error("Status fetch failed", e); }
         });
 
-        function openPayment() {
-            document.getElementById('paymentModal').classList.add('active');
-            document.getElementById('successOverlay').classList.remove('active');
-            document.getElementById('payBtn').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Pay ₹89.00`;
+        async function openPayment() {
+            const btn = document.querySelector('.btn-primary');
+            btn.innerHTML = `Loading Secure Checkout...`;
+            
+            try {
+                // 1. Generate Razorpay Order securely via Python backend
+                const res = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    alert("Payment Gateway Error: " + data.error);
+                    btn.innerHTML = `Subscribe Now`;
+                    return;
+                }
+
+                // 2. Deploy Razorpay Checkout Popup
+                const options = {
+                    "key": data.key_id, 
+                    "amount": data.amount,
+                    "currency": data.currency,
+                    "name": "CareerForge AI",
+                    "description": "Express Plan - Unlimited Tech Pro Tools",
+                    "image": "https://careerforgeaitrident.onrender.com/favicon.ico", // Temporary logo
+                    "order_id": data.order_id,
+                    "handler": async function (response){
+                        // 3. Verify Payment Cryptography on Backend
+                        btn.innerHTML = `Verifying...`;
+                        const verifyRes = await fetch(`${API_BASE_URL}/api/payment/verify`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        const verifyData = await verifyRes.json();
+                        if (verifyData.status === "success") {
+                            document.getElementById('paymentModal').classList.add('active');
+                            localStorage.setItem('is_premium', 'true');
+                            btn.innerHTML = "Current Plan";
+                            btn.disabled = true;
+                            btn.classList.replace('btn-primary', 'btn-outline');
+                        } else {
+                            alert("Payment verification failed. Please contact support.");
+                            btn.innerHTML = `Subscribe Now`;
+                        }
+                    },
+                    "theme": { "color": "#6366f1" }
+                };
+                
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response){
+                    alert("Payment Failed: " + response.error.description);
+                    btn.innerHTML = `Subscribe Now`;
+                });
+                rzp.open();
+                btn.innerHTML = `Awaiting Payment...`;
+            } catch (e) {
+                console.error(e);
+                alert("Network error connecting to payment gateway.");
+                btn.innerHTML = `Subscribe Now`;
+            }
         }
 
         function closePayment() {
             document.getElementById('paymentModal').classList.remove('active');
-        }
-
-        function processPayment() {
-            const btn = document.getElementById('payBtn');
-            btn.innerHTML = `Processing...`;
-            
-            // Simulate API Call
-            setTimeout(() => {
-                document.getElementById('successOverlay').classList.add('active');
-                
-                // For demonstration, also unlock premium pass in CareerRPG if the UI allows it globally
-                if (localStorage.getItem('careerRPG_V4State')) {
-                    const rpgState = JSON.parse(localStorage.getItem('careerRPG_V4State'));
-                    if (!rpgState.unlockedFeatures) rpgState.unlockedFeatures = [];
-                    if (!rpgState.unlockedFeatures.includes('premium_pass')) {
-                        rpgState.unlockedFeatures.push('premium_pass');
-                        localStorage.setItem('careerRPG_V4State', JSON.stringify(rpgState));
-                    }
-                }
-            }, 1500);
         }
     </script>
     <script src="/js/main.js"></script>

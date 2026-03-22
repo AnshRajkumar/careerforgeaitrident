@@ -58,10 +58,72 @@ app.add_middleware(
 # TEMP USER (replace later with auth)
 USER_ID = "user_123"
 
+# ------------------------------
+# Payment Gateway (Razorpay)
+# ------------------------------
+import razorpay
+
+RAZORPAY_KEY_ID = "rzp_test_STAQpl8lWmDX9C"
+RAZORPAY_KEY_SECRET = "eJkrI1KT1Qo7d1M8jxQ1XOhU"
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+@app.post("/api/payment/create-order")
+async def create_order():
+    try:
+        amount = 8900  # Rs. 89 in paise
+        currency = "INR"
+        receipt = f"receipt_{USER_ID}"
+        order = razorpay_client.order.create({"amount": amount, "currency": currency, "receipt": receipt})
+        return {"order_id": order["id"], "amount": amount, "currency": currency, "key_id": RAZORPAY_KEY_ID}
+    except Exception as e:
+        print(f"[Razorpay] Create Order Error: {e}")
+        return {"error": str(e)}
+
+class PaymentVerifyRequest(BaseModel):
+    razorpay_payment_id: str
+    razorpay_order_id: str
+    razorpay_signature: str
+
+@app.post("/api/payment/verify")
+async def verify_payment(req: PaymentVerifyRequest):
+    try:
+        data = {
+            'razorpay_order_id': req.razorpay_order_id,
+            'razorpay_payment_id': req.razorpay_payment_id,
+            'razorpay_signature': req.razorpay_signature
+        }
+        # Cryptographically verify the signature
+        razorpay_client.utility.verify_payment_signature(data)
+        
+        # Upgrade User to Premium in DB
+        database = get_db()
+        if database is not None:
+            await database.users.update_one(
+                {"user_id": USER_ID},
+                {"$set": {"is_premium": True, "premium_since": str(datetime.now())}},
+                upsert=True
+            )
+        return {"status": "success", "message": "Payment verified! Express Plan unlocked."}
+    except razorpay.errors.SignatureVerificationError:
+        return {"status": "failed", "message": "Invalid payment signature."}
+    except Exception as e:
+        print(f"[Razorpay] Verify Error: {e}")
+        return {"status": "error", "message": str(e)}
+
+@app.get("/api/user/status")
+async def get_user_status():
+    database = get_db()
+    if database is not None:
+        user = await database.users.find_one({"user_id": USER_ID})
+        if user and user.get("is_premium"):
+            return {"is_premium": True}
+    return {"is_premium": False}
+
 
 # ------------------------------
 # Home
 # ------------------------------
+
 @app.get("/")
 def home():
     return {"message": "CareerForge AI running"}
@@ -340,9 +402,29 @@ class ChatRequest(BaseModel):
 async def vargo_chat(request: ChatRequest):
     response = generate_response(request.query, USER_ID)
     
-    # Persist to MongoDB Atlas
+    # Persist and check Usage Limits for Free Tier Users
     database = get_db()
     if database is not None:
+        user = await database.users.find_one({"user_id": USER_ID})
+        is_premium = user.get("is_premium", False) if user else False
+        
+        if not is_premium:
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            daily_usage = await database.usage_limits.find_one({"user_id": USER_ID, "date": today_str})
+            vargo_count = daily_usage.get("vargo_chats", 0) if daily_usage else 0
+            
+            if vargo_count >= 5:
+                return {
+                    "assistant": "VarGo",
+                    "response": "⚠️ **Daily Limit Reached.** You have exhausted your 5 free VarGo interactions for today. Please upgrade your account to the **Express Plan** for unrestricted AI power!"
+                }
+                
+            await database.usage_limits.update_one(
+                {"user_id": USER_ID, "date": today_str},
+                {"$inc": {"vargo_chats": 1}},
+                upsert=True
+            )
+
         session_id = request.session_id or "default"
         try:
             await database.vargo_chats.update_one(
@@ -586,8 +668,31 @@ interview_state = {
 }
 
 @app.post("/interview_start")
-def interview_start(request: InterviewStartRequest):
+async def interview_start(request: InterviewStartRequest):
     global interview_state
+    
+    database = get_db()
+    if database is not None:
+        user = await database.users.find_one({"user_id": USER_ID})
+        is_premium = user.get("is_premium", False) if user else False
+        
+        if not is_premium:
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            daily_usage = await database.usage_limits.find_one({"user_id": USER_ID, "date": today_str})
+            interview_count = daily_usage.get("interviews", 0) if daily_usage else 0
+            
+            if interview_count >= 2:
+                return {
+                    "status": "error", 
+                    "message": "⚠️ **Daily Limit Reached.** You have exhausted your 2 free AI Pro-Proctored Interviews for today. Please upgrade to the **Express Plan** for unlimited professional interview simulations."
+                }
+                
+            await database.usage_limits.update_one(
+                {"user_id": USER_ID, "date": today_str},
+                {"$inc": {"interviews": 1}},
+                upsert=True
+            )
+
     interview_state["current_question"] = None
     interview_state["round"] = 0
     interview_state["role"] = request.role
