@@ -109,11 +109,18 @@ def voice_to_text():
 # ------------------------------
 # VOICE OUTPUT
 # ------------------------------
-engine = pyttsx3.init()
+engine = None
+try:
+    engine = pyttsx3.init()
+except Exception as e:
+    print("[CareerForgeAI] Local TTS engine disabled (Running in Headless Cloud Mode).")
 
 def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+    if engine:
+        engine.say(text)
+        engine.runAndWait()
+    else:
+        print(f"[Headless Voice Output]: {text}")
 
 
 # ------------------------------
