@@ -977,6 +977,41 @@ class CallConnectionManager:
                     except Exception as e:
                         print(f"Failed to send to peer: {str(e)}")
 
+# ------------------------------
+# AI News Bulletin
+# ------------------------------
+@app.get("/api/news")
+async def get_ai_news():
+    from ml.vargo_assistant import groq_response
+    import json as json_lib
+    
+    prompt = """You are an expert tech and business trend analyst. 
+Generate exactly 4 fresh, breaking news bulletins about today's trending Megatrends (like AI startups, Semiconductor advancements, Corporate strategy shifts, or Global tech policy).
+Make the news sound extremely current, realistic, and highly impactful for non-technical and technical professionals.
+
+Return ONLY a valid JSON array of objects, with no extra text or markdown formatting outside the array. Each object must have:
+- "title": A catchy, professional news headline.
+- "category": A 1-word category (e.g. AI, Business, Startup, Policy, Tech).
+- "time": A string indicating recency (e.g. "2 hours ago", "Just now", "Today").
+- "summary": A 2-sentence executive summary of the news and why it matters to CareerForgeAI users.
+
+Return ONLY the JSON array."""
+    
+    try:
+        raw = groq_response(prompt)
+        start = raw.find("[")
+        end = raw.rfind("]") + 1
+        
+        if start == -1 or end == 0:
+            return {"error": "Failed to generate news"}
+            
+        news_data = json_lib.loads(raw[start:end])
+        return {"news": news_data}
+    except Exception as e:
+        print(f"News generation error: {e}")
+        return {"error": "Failed to fetch AI news"}
+
+
 call_manager = CallConnectionManager()
 
 @app.websocket("/ws/call/{room_id}")

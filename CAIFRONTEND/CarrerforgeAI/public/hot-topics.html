@@ -6,85 +6,146 @@
     <title>Tech Hot Topics — CareerforgeAI</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        .placeholder-content {
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+            padding: 20px;
+        }
+        .news-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .news-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #6366f1;
+            border-radius: 4px 0 0 4px;
+        }
+        .news-category {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .news-time {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-left: 10px;
+        }
+        .news-title {
+            font-size: 1.25rem;
+            color: white;
+            margin: 0 0 12px 0;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+        .news-summary {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .loader-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
-            text-align: center;
-        }
-        .back-btn {
-            margin-top: 30px;
+            min-height: 40vh;
             color: #818cf8;
-            text-decoration: none;
-            font-weight: 600;
+        }
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
     </style>
-</head>
-<body>
-    <div class="bg-overlay"></div>
 
-    <!-- Hamburger Menu Button -->
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-text">Menu</div>
-        </div>
-        <nav class="sidebar-nav">
-            <div class="nav-group">
-                <a href="/" class="sidebar-link">
-                    <span class="link-icon">🏠</span>
-                    <span>Home</span>
-                </a>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-label">Support</div>
-                <a href="/contact" class="sidebar-link">
-                    <span class="link-icon">📞</span>
-                    <span>Contact Developers</span>
-                </a>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-label">Feedback</div>
-                <a href="/review" class="sidebar-link">
-                    <span class="link-icon">💬</span>
-                    <span>Review System</span>
-                </a>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-label">Help Center</div>
-                <a href="/terms" class="sidebar-link">
-                    <span>Terms & Conditions</span>
-                </a>
-                <a href="/release-notes" class="sidebar-link">
-                    <span>Release Notes</span>
-                </a>
-                <a href="/pricing.html" class="sidebar-link">
-                    <span>Pricing & Plans</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
-
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <main class="content">
-        <div class="container placeholder-content">
-            <h1 class="title-small">Tech <span class="accent">Hot Topics</span></h1>
-            <p class="subtitle">Latest trends and insights coming soon!</p>
-            <!-- Sidebar navigation -->
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 class="title-small">AI <span class="accent">Trend Radar</span></h1>
+                <p class="subtitle" id="news-subtitle">Generating live industry megatrends...</p>
+            </div>
+
+            <div id="news-container">
+                <div class="loader-container" id="news-loader">
+                    <div class="loader-spinner"></div>
+                    <p>VarGo is aggregating global breaking news...</p>
+                </div>
+                <div class="news-grid" id="news-grid">
+                    <!-- News cards will be injected here -->
+                </div>
+            </div>
         </div>
     </main>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('news-grid');
+            const loader = document.getElementById('news-loader');
+            const subtitle = document.getElementById('news-subtitle');
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/news`);
+                const data = await res.json();
+
+                loader.style.display = 'none';
+
+                if (data.news && data.news.length > 0) {
+                    subtitle.textContent = "Latest highly-curated tech and business bulletins";
+                    data.news.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'news-card';
+                        card.innerHTML = `
+                            <div>
+                                <span class="news-category">${item.category}</span>
+                                <span class="news-time">🕒 ${item.time}</span>
+                            </div>
+                            <h3 class="news-title">${item.title}</h3>
+                            <p class="news-summary">${item.summary}</p>
+                        `;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    subtitle.textContent = "Unable to fetch trends right now. Check back later!";
+                }
+            } catch (error) {
+                console.error("News fetch error:", error);
+                loader.style.display = 'none';
+                subtitle.textContent = "Live news stream is currently offline.";
+            }
+        });
+    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>
