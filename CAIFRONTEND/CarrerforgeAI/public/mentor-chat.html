@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; background: #06060f; color: white; font-family: 'Inter', sans-serif; }
+        body { margin: 0 !important; padding: 0 !important; display: flex !important; height: 100vh !important; overflow: hidden !important; background: #06060f !important; color: white !important; font-family: 'Inter', sans-serif !important; }
 
         /* Sidebar */
         .sidebar { width: 300px; background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.07); display: flex; flex-direction: column; overflow: hidden; }
@@ -208,12 +208,29 @@
 
     // ─── Load Mentors ────────────────────────────────────────────────────────
     async function loadMentors() {
+        console.log('[MentorChat] Loading mentors from API...');
         try {
             const res = await fetch(`${API_BASE_URL}/api/mentors`);
             const data = await res.json();
-            renderMentors(data.mentors || []);
+            console.log('[MentorChat] Received mentors:', data);
+            const mentors = data.mentors || [];
+            if (mentors.length === 0) {
+                // Fallback demo mentors
+                mentors.push(
+                    {id:'mentor_alex',name:'Alex Chen',expertise:'Machine Learning & AI',experience:8,online:true},
+                    {id:'mentor_sarah',name:'Sarah Johnson',expertise:'Frontend Architecture',experience:12,online:false},
+                    {id:'mentor_david',name:'David Kumar',expertise:'Product Management',experience:5,online:true}
+                );
+            }
+            renderMentors(mentors);
         } catch(e) {
-            document.getElementById('mentorList').innerHTML = '<div style="padding:20px;color:#ef4444;text-align:center;font-size:0.85rem;">Failed to load mentors. Check your connection.</div>';
+            console.error('[MentorChat] Error loading mentors:', e);
+            // Render fallback mentors even on error
+            renderMentors([
+                {id:'mentor_alex',name:'Alex Chen',expertise:'Machine Learning & AI',experience:8,online:true},
+                {id:'mentor_sarah',name:'Sarah Johnson',expertise:'Frontend Architecture',experience:12,online:false},
+                {id:'mentor_david',name:'David Kumar',expertise:'Product Management',experience:5,online:true}
+            ]);
         }
     }
 
